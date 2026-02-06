@@ -700,21 +700,38 @@ export default function VemarAIStudio() {
                   {agents.map((agent, idx) => {
                     const Icon = agent.icon
                     const hasResponse = agentHistory[idx]
+                    const isActive = activeAgent === idx
                     return (
-                      <div
+                      <button
                         key={agent.id}
-                        className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
-                          hasResponse ? 'bg-green-500/10 border border-green-500/20' : 'bg-slate-700/20'
+                        onClick={() => {
+                          setActiveAgent(idx)
+                          if (hasResponse) {
+                            setResponse(agentHistory[idx])
+                          } else {
+                            setResponse(null)
+                          }
+                          setQuery('')
+                          setError(null)
+                        }}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
+                          isActive
+                            ? `bg-gradient-to-r ${agent.bgGradient} border border-slate-600 shadow-md`
+                            : hasResponse
+                            ? 'bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 hover:border-green-500/30'
+                            : 'bg-slate-700/20 hover:bg-slate-700/40 border border-transparent hover:border-slate-600'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 ${hasResponse ? 'text-green-400' : 'text-slate-500'}`} />
-                        <span className="text-sm flex-1">{agent.shortName}</span>
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : hasResponse ? 'text-green-400' : 'text-slate-500'}`} />
+                        <span className={`text-sm flex-1 text-left ${isActive ? 'text-white font-medium' : 'text-slate-300'}`}>
+                          {agent.shortName}
+                        </span>
                         {hasResponse ? (
-                          <FiCheckCircle className="w-4 h-4 text-green-400" />
+                          <FiCheckCircle className={`w-4 h-4 ${isActive ? 'text-white' : 'text-green-400'}`} />
                         ) : (
-                          <div className="w-2 h-2 rounded-full bg-slate-600"></div>
+                          <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-slate-600'}`}></div>
                         )}
-                      </div>
+                      </button>
                     )
                   })}
                 </div>
