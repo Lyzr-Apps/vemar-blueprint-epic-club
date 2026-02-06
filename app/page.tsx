@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
+import { getPaymentUrl } from '@/lib/payment'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -428,6 +429,19 @@ export default function VemarAIStudio() {
     linkElement.click()
   }
 
+  const handlePaymentGateway = async () => {
+    try {
+      const result = await getPaymentUrl()
+      if (result.success && result.payment_url) {
+        window.open(result.payment_url, '_blank')
+      } else {
+        setError(result.error || 'Failed to access payment gateway')
+      }
+    } catch (err) {
+      setError('Failed to connect to payment gateway')
+    }
+  }
+
   const handleQuickAction = async (actionType: 'pitch-deck' | 'tech-stack' | 'roadmap' | 'business-plan') => {
     const actionMap = {
       'pitch-deck': {
@@ -653,7 +667,7 @@ export default function VemarAIStudio() {
               </div>
 
               <Button
-                onClick={() => window.open('https://pay.lyzr.ai', '_blank')}
+                onClick={handlePaymentGateway}
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0"
               >
                 <FiCreditCard className="w-4 h-4 mr-2" />
