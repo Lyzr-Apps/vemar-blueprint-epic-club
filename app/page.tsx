@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
-import { getPaymentUrl } from '@/lib/payment'
+import { getPaymentUrl, createPaymentSession } from '@/lib/payment'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -283,6 +283,22 @@ export default function VemarAIStudio() {
   const [guardrailWarning, setGuardrailWarning] = useState<string | null>(null)
   const [isInvestorMode, setIsInvestorMode] = useState(true)
 
+  // Payment modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState<string>('')
+  const [paymentDescription, setPaymentDescription] = useState<string>('')
+  const [paymentMetadata, setPaymentMetadata] = useState<string>('')
+  const [paymentLoading, setPaymentLoading] = useState(false)
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle')
+  const [paymentMessage, setPaymentMessage] = useState<string>('')
+  const [paymentHistory, setPaymentHistory] = useState<Array<{
+    id: string
+    amount: number
+    description: string
+    status: 'success' | 'error'
+    timestamp: string
+  }>>([])
+
   const typewriterWords = [
     'a revolutionary AI defense platform',
     'enterprise-grade deepfake detection',
@@ -430,15 +446,95 @@ export default function VemarAIStudio() {
   }
 
   const handlePaymentGateway = async () => {
+    setShowPaymentModal(true)
+    setPaymentStatus('idle')
+    setPaymentMessage('')
+  }
+
+  const handlePaymentSubmit = async () => {
+    const amount = parseFloat(paymentAmount)
+
+    if (!amount || amount <= 0) {
+      setPaymentMessage('Please enter a valid amount')
+      setPaymentStatus('error')
+      return
+    }
+
+    setPaymentLoading(true)
+    setPaymentStatus('processing')
+    setPaymentMessage('Processing payment...')
+
     try {
-      const result = await getPaymentUrl()
-      if (result.success && result.payment_url) {
-        window.open(result.payment_url, '_blank')
+      let metadata: Record<string, any> = {}
+      if (paymentMetadata.trim()) {
+        try {
+          metadata = JSON.parse(paymentMetadata)
+        } catch {
+          setPaymentMessage('Invalid metadata JSON format')
+          setPaymentStatus('error')
+          setPaymentLoading(false)
+          return
+        }
+      }
+
+      const result = await createPaymentSession(
+        amount,
+        paymentDescription || `Payment of $${amount}`,
+        Object.keys(metadata).length > 0 ? metadata : undefined
+      )
+
+      if (result.success) {
+        setPaymentStatus('success')
+        setPaymentMessage(`Payment session created successfully! URL: ${result.payment_url}`)
+
+        // Add to payment history
+        const newTransaction = {
+          id: `txn-${Date.now()}`,
+          amount,
+          description: paymentDescription || `Payment of $${amount}`,
+          status: 'success' as const,
+          timestamp: new Date().toISOString()
+        }
+        setPaymentHistory(prev => [newTransaction, ...prev])
+
+        // Open payment URL
+        if (result.payment_url) {
+          window.open(result.payment_url, '_blank')
+        }
+
+        // Reset form after delay
+        setTimeout(() => {
+          setPaymentAmount('')
+          setPaymentDescription('')
+          setPaymentMetadata('')
+        }, 2000)
       } else {
-        setError(result.error || 'Failed to access payment gateway')
+        setPaymentStatus('error')
+        setPaymentMessage(result.error || 'Failed to create payment session')
+
+        // Add to payment history as error
+        const newTransaction = {
+          id: `txn-${Date.now()}`,
+          amount,
+          description: paymentDescription || `Payment of $${amount}`,
+          status: 'error' as const,
+          timestamp: new Date().toISOString()
+        }
+        setPaymentHistory(prev => [newTransaction, ...prev])
       }
     } catch (err) {
-      setError('Failed to connect to payment gateway')
+      setPaymentStatus('error')
+      setPaymentMessage('Failed to connect to payment gateway')
+    } finally {
+      setPaymentLoading(false)
+    }
+  }
+
+  const closePaymentModal = () => {
+    if (!paymentLoading) {
+      setShowPaymentModal(false)
+      setPaymentStatus('idle')
+      setPaymentMessage('')
     }
   }
 
@@ -672,7 +768,6 @@ export default function VemarAIStudio() {
               >
                 <FiCreditCard className="w-4 h-4 mr-2" />
                 Payment Gateway
-                <FiExternalLink className="w-3 h-3 ml-2" />
               </Button>
 
               <Button
@@ -1077,6 +1172,116 @@ export default function VemarAIStudio() {
         </div>
       </section>
 
+      {/* Payment History Section */}
+      {paymentHistory.length > 0 && (
+        <section className="border-b border-slate-800 bg-gradient-to-b from-slate-900/50 to-slate-950">
+          <div className="container mx-auto px-4 py-12">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-4">
+                  <FiActivity className="w-4 h-4 text-green-400" />
+                  <span className="text-sm text-green-300 font-medium">Payment History</span>
+                </div>
+                <h3 className="text-3xl font-bold mb-3">Transaction Log</h3>
+                <p className="text-slate-400">Test your payment sessions and track their status</p>
+              </div>
+
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    {paymentHistory.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className={`p-4 rounded-lg border transition-all ${
+                          transaction.status === 'success'
+                            ? 'bg-green-500/5 border-green-500/20 hover:bg-green-500/10'
+                            : 'bg-red-500/5 border-red-500/20 hover:bg-red-500/10'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-start gap-3 flex-1">
+                            <div className={`p-2 rounded-lg ${
+                              transaction.status === 'success'
+                                ? 'bg-green-500/20'
+                                : 'bg-red-500/20'
+                            }`}>
+                              {transaction.status === 'success' ? (
+                                <FiCheckCircle className="w-5 h-5 text-green-400" />
+                              ) : (
+                                <FiAlertCircle className="w-5 h-5 text-red-400" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-slate-200">{transaction.description}</h4>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  transaction.status === 'success'
+                                    ? 'bg-green-500/20 text-green-300'
+                                    : 'bg-red-500/20 text-red-300'
+                                }`}>
+                                  {transaction.status}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4 text-sm text-slate-400">
+                                <span className="flex items-center gap-1">
+                                  <FiDollarSign className="w-3 h-3" />
+                                  {transaction.amount.toFixed(2)} USD
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <FiActivity className="w-3 h-3" />
+                                  {new Date(transaction.timestamp).toLocaleString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className={`text-2xl font-bold ${
+                              transaction.status === 'success'
+                                ? 'text-green-400'
+                                : 'text-red-400'
+                            }`}>
+                              ${transaction.amount.toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-slate-700">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Total Transactions</span>
+                      <span className="font-semibold text-slate-200">{paymentHistory.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm mt-2">
+                      <span className="text-slate-400">Successful Payments</span>
+                      <span className="font-semibold text-green-400">
+                        {paymentHistory.filter(t => t.status === 'success').length}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm mt-2">
+                      <span className="text-slate-400">Failed Payments</span>
+                      <span className="font-semibold text-red-400">
+                        {paymentHistory.filter(t => t.status === 'error').length}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-base mt-4 pt-4 border-t border-slate-700">
+                      <span className="text-slate-300 font-medium">Total Amount Processed</span>
+                      <span className="font-bold text-lg text-blue-400">
+                        ${paymentHistory
+                          .filter(t => t.status === 'success')
+                          .reduce((sum, t) => sum + t.amount, 0)
+                          .toFixed(2)} USD
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Agent Tabs */}
@@ -1377,6 +1582,146 @@ export default function VemarAIStudio() {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
+                  <FiCreditCard className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-100">Payment Gateway</h3>
+                  <p className="text-sm text-slate-400">Create a new payment session</p>
+                </div>
+              </div>
+              <button
+                onClick={closePaymentModal}
+                disabled={paymentLoading}
+                className="p-2 hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FiAlertCircle className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-6">
+              {/* Payment Form */}
+              <div className="space-y-4">
+                {/* Amount Input */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Amount (USD)
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FiDollarSign className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={paymentAmount}
+                      onChange={(e) => setPaymentAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="pl-10 bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-green-500 focus:ring-green-500/20"
+                      disabled={paymentLoading}
+                    />
+                  </div>
+                </div>
+
+                {/* Description Input */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Description (Optional)
+                  </label>
+                  <Input
+                    type="text"
+                    value={paymentDescription}
+                    onChange={(e) => setPaymentDescription(e.target.value)}
+                    placeholder="Payment for services..."
+                    className="bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-green-500 focus:ring-green-500/20"
+                    disabled={paymentLoading}
+                  />
+                </div>
+
+                {/* Metadata Input */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Metadata (Optional JSON)
+                  </label>
+                  <Textarea
+                    value={paymentMetadata}
+                    onChange={(e) => setPaymentMetadata(e.target.value)}
+                    placeholder='{"customer_id": "123", "order_id": "456"}'
+                    className="min-h-[80px] bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-green-500 focus:ring-green-500/20 font-mono text-sm"
+                    disabled={paymentLoading}
+                  />
+                  <p className="text-xs text-slate-500 mt-1">Optional: Valid JSON object for additional data</p>
+                </div>
+              </div>
+
+              {/* Status Message */}
+              {paymentMessage && (
+                <div className={`flex items-start gap-3 p-4 rounded-lg border ${
+                  paymentStatus === 'success'
+                    ? 'bg-green-500/10 border-green-500/20'
+                    : paymentStatus === 'error'
+                    ? 'bg-red-500/10 border-red-500/20'
+                    : 'bg-blue-500/10 border-blue-500/20'
+                }`}>
+                  {paymentStatus === 'success' && <FiCheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />}
+                  {paymentStatus === 'error' && <FiAlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />}
+                  {paymentStatus === 'processing' && <FiLoader className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 animate-spin" />}
+                  <div className="flex-1">
+                    <p className={`text-sm ${
+                      paymentStatus === 'success'
+                        ? 'text-green-300'
+                        : paymentStatus === 'error'
+                        ? 'text-red-300'
+                        : 'text-blue-300'
+                    }`}>
+                      {paymentMessage}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={closePaymentModal}
+                  disabled={paymentLoading}
+                  variant="outline"
+                  className="flex-1 bg-slate-800 border-slate-700 hover:bg-slate-700"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handlePaymentSubmit}
+                  disabled={paymentLoading}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0"
+                >
+                  {paymentLoading ? (
+                    <>
+                      <FiLoader className="w-4 h-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <FiCreditCard className="w-4 h-4 mr-2" />
+                      Create Payment Session
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="border-t border-slate-800 mt-16">
