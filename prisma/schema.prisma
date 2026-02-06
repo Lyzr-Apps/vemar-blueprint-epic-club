@@ -1,0 +1,202 @@
+// Prisma Schema for Multi-Client Agent System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  company     String?
+  phone       String?
+  status      ClientStatus @default(ACTIVE)
+  priority    ClientPriority @default(STANDARD)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requests    Request[]
+  notes       ClientNote[]
+
+  @@index([email])
+  @@index([status])
+}
+
+model Request {
+  id            String   @id @default(cuid())
+  title         String
+  description   String   @db.Text
+  category      RequestCategory
+  priority      RequestPriority @default(MEDIUM)
+  status        RequestStatus @default(PENDING)
+  assignedAgent String?
+
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  estimatedHours Float?
+  actualHours    Float?
+  dueDate        DateTime?
+  completedAt    DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  messages      Message[]
+  attachments   Attachment[]
+  agentActions  AgentAction[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([assignedAgent])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  sender      MessageSender
+  senderName  String
+
+  requestId   String
+  request     Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([requestId])
+  @@index([createdAt])
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  fileName    String
+  fileUrl     String
+  fileType    String
+  fileSize    Int
+
+  requestId   String
+  request     Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  @@index([requestId])
+}
+
+model AgentAction {
+  id          String   @id @default(cuid())
+  agentName   String
+  action      String
+  description String   @db.Text
+  result      String?  @db.Text
+
+  requestId   String
+  request     Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  duration    Int?     // in seconds
+  success     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([requestId])
+  @@index([agentName])
+}
+
+model ClientNote {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  category    NoteCategory @default(GENERAL)
+
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clientId])
+}
+
+model AgentConfig {
+  id              String   @id @default(cuid())
+  agentName       String   @unique
+  agentType       AgentType
+  isActive        Boolean  @default(true)
+  maxConcurrent   Int      @default(3)
+
+  capabilities    String[] // JSON array of capabilities
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agentName])
+}
+
+// Enums
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ClientPriority {
+  VIP
+  HIGH
+  STANDARD
+  LOW
+}
+
+enum RequestCategory {
+  SUPPORT
+  DEVELOPMENT
+  DESIGN
+  CONSULTING
+  CONTENT
+  MARKETING
+  DATA_ANALYSIS
+  OTHER
+}
+
+enum RequestPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RequestStatus {
+  PENDING
+  IN_PROGRESS
+  WAITING_CLIENT
+  WAITING_AGENT
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageSender {
+  CLIENT
+  AGENT
+  SYSTEM
+}
+
+enum NoteCategory {
+  GENERAL
+  MEETING
+  FEEDBACK
+  ISSUE
+  OPPORTUNITY
+}
+
+enum AgentType {
+  SUPPORT
+  TECHNICAL
+  CREATIVE
+  ANALYTICS
+  COORDINATOR
+}

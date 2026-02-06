@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { IframeLoggerInit } from '@/components/IframeLoggerInit'
+import { Navigation } from '@/components/navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Next.js App',
-  description: 'Built with Next.js, React, and Tailwind CSS',
+  title: 'Client Request Manager - Architect by Lyzr',
+  description: 'Multi-agent system for managing client requests',
 }
 
 export default function RootLayout({
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <IframeLoggerInit />
+        <Navigation />
         {children}
       </body>
     </html>
