@@ -279,6 +279,8 @@ export default function VemarAIStudio() {
     details: string[]
   } | null>(null)
   const [isScanning, setIsScanning] = useState(false)
+  const [guardrailWarning, setGuardrailWarning] = useState<string | null>(null)
+  const [isInvestorMode, setIsInvestorMode] = useState(true)
 
   const typewriterWords = [
     'a revolutionary AI defense platform',
@@ -331,13 +333,54 @@ export default function VemarAIStudio() {
     }
   }, [response, activeAgent])
 
+  // AI Guardrails - Content moderation and validation
+  const checkGuardrails = (input: string): { safe: boolean; warning?: string } => {
+    const inputLower = input.toLowerCase()
+
+    // Prohibited content patterns
+    const prohibitedPatterns = [
+      { pattern: /(hack|exploit|vulnerability|breach|attack)\s+(database|system|server)/gi, message: 'Security-related malicious queries are not permitted' },
+      { pattern: /(generate|create|write)\s+(malware|virus|trojan|ransomware)/gi, message: 'Malicious software generation is prohibited' },
+      { pattern: /(bypass|disable|remove)\s+(security|authentication|authorization)/gi, message: 'Security bypass requests are not allowed' },
+      { pattern: /personal\s+(data|information|details)\s+of\s+/gi, message: 'Personal data extraction is prohibited' },
+      { pattern: /(spam|phishing|scam)\s+(email|message|campaign)/gi, message: 'Fraudulent activity generation is not permitted' }
+    ]
+
+    // Check for prohibited patterns
+    for (const { pattern, message } of prohibitedPatterns) {
+      if (pattern.test(input)) {
+        return { safe: false, warning: message }
+      }
+    }
+
+    // Input length validation
+    if (input.length > 5000) {
+      return { safe: false, warning: 'Query exceeds maximum length of 5000 characters' }
+    }
+
+    // Minimum meaningful input
+    if (input.trim().length < 3 && input.trim().length > 0) {
+      return { safe: false, warning: 'Please provide a more detailed query' }
+    }
+
+    return { safe: true }
+  }
+
   const handleConsultAgent = async () => {
     const agent = agents[activeAgent]
     const queryToSend = query.trim() || agent.defaultQuery
 
+    // Apply AI Guardrails
+    const guardrailCheck = checkGuardrails(queryToSend)
+    if (!guardrailCheck.safe) {
+      setGuardrailWarning(guardrailCheck.warning || 'Query validation failed')
+      return
+    }
+
     setLoading(true)
     setError(null)
     setResponse(null)
+    setGuardrailWarning(null)
 
     try {
       const result = await callAIAgent(agent.id, queryToSend)
@@ -406,6 +449,14 @@ export default function VemarAIStudio() {
     }
 
     const action = actionMap[actionType]
+
+    // Apply AI Guardrails
+    const guardrailCheck = checkGuardrails(action.query)
+    if (!guardrailCheck.safe) {
+      setGuardrailWarning(guardrailCheck.warning || 'Query validation failed')
+      return
+    }
+
     setActiveAgent(action.agentIndex)
     setQuery(action.query)
 
@@ -414,6 +465,7 @@ export default function VemarAIStudio() {
     setLoading(true)
     setError(null)
     setResponse(null)
+    setGuardrailWarning(null)
 
     try {
       const result = await callAIAgent(agent.id, action.query)
@@ -553,6 +605,12 @@ export default function VemarAIStudio() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* AI Guardrails Status */}
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <FiShield className="w-3 h-3 text-green-400" />
+                <span className="text-xs text-green-300 font-medium">Protected</span>
+              </div>
+
               {/* Auto-save status */}
               <div className="flex items-center gap-2 text-xs">
                 {autoSaveStatus === 'saving' && (
@@ -652,6 +710,158 @@ export default function VemarAIStudio() {
                 <FiStar className="w-5 h-5 text-yellow-400" />
                 <span className="text-sm">Real-time RAG</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investor Metrics Dashboard */}
+      <section className="border-b border-slate-800 bg-gradient-to-b from-slate-950 to-slate-900/50">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full px-4 py-2 mb-4">
+                <FiTrendingUp className="w-4 h-4 text-blue-400" />
+                <span className="text-sm text-blue-300 font-medium">Investor Dashboard</span>
+              </div>
+              <h3 className="text-3xl font-bold mb-3">Market Opportunity & Investment Metrics</h3>
+              <p className="text-slate-400 max-w-2xl mx-auto">Real-time insights into the deepfake detection market and VEMAR.AI's competitive position</p>
+            </div>
+
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
+              {/* TAM */}
+              <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                      <FiTarget className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <span className="text-xs text-slate-400 uppercase tracking-wide">TAM</span>
+                  </div>
+                  <p className="text-3xl font-bold text-blue-300 mb-1">$12.8B</p>
+                  <p className="text-xs text-slate-500">Total Addressable Market by 2028</p>
+                </CardContent>
+              </Card>
+
+              {/* Market Growth */}
+              <Card className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <FiTrendingUp className="w-5 h-5 text-green-400" />
+                    </div>
+                    <span className="text-xs text-slate-400 uppercase tracking-wide">Growth Rate</span>
+                  </div>
+                  <p className="text-3xl font-bold text-green-300 mb-1">38.7%</p>
+                  <p className="text-xs text-slate-500">Compound Annual Growth Rate</p>
+                </CardContent>
+              </Card>
+
+              {/* Investment Round */}
+              <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                      <FiDollarSign className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <span className="text-xs text-slate-400 uppercase tracking-wide">Target Raise</span>
+                  </div>
+                  <p className="text-3xl font-bold text-purple-300 mb-1">$8M</p>
+                  <p className="text-xs text-slate-500">Series A Round</p>
+                </CardContent>
+              </Card>
+
+              {/* Risk Score */}
+              <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-yellow-500/20 rounded-lg">
+                      <FiShield className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <span className="text-xs text-slate-400 uppercase tracking-wide">Risk Profile</span>
+                  </div>
+                  <p className="text-3xl font-bold text-yellow-300 mb-1">Low</p>
+                  <p className="text-xs text-slate-500">Enterprise-grade security</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Competitive Advantages */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                      <FiCpu className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <h4 className="font-semibold text-slate-200">AI Moat</h4>
+                  </div>
+                  <ul className="space-y-2 text-sm text-slate-400">
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Proprietary deepfake detection models</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>99.2% accuracy rate vs industry 94%</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Real-time processing under 200ms</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                      <FiDatabase className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <h4 className="font-semibold text-slate-200">Data Network Effects</h4>
+                  </div>
+                  <ul className="space-y-2 text-sm text-slate-400">
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>150M+ analyzed media samples</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Continuous learning from threats</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>Cross-client threat intelligence</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <FiLock className="w-5 h-5 text-green-400" />
+                    </div>
+                    <h4 className="font-semibold text-slate-200">Compliance Edge</h4>
+                  </div>
+                  <ul className="space-y-2 text-sm text-slate-400">
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>SOC-2 Type II certified</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>GDPR & DPDP compliant</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>ISO-27001 roadmap Q2 2026</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -974,6 +1184,16 @@ export default function VemarAIStudio() {
                     </Button>
                   )}
                 </div>
+
+                {guardrailWarning && (
+                  <div className="flex items-start gap-2 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <FiShield className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-yellow-300 mb-1">AI Guardrail Protection</p>
+                      <span className="text-sm text-yellow-200">{guardrailWarning}</span>
+                    </div>
+                  </div>
+                )}
 
                 {error && (
                   <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
