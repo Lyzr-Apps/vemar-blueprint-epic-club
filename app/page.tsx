@@ -12,7 +12,8 @@ import {
   FiAlertCircle, FiLoader, FiZap, FiBriefcase, FiTarget,
   FiGrid, FiLayers, FiActivity, FiStar, FiTrendingDown,
   FiMoon, FiSun, FiMonitor, FiSend, FiRefreshCw, FiMaximize2,
-  FiCreditCard, FiExternalLink
+  FiCreditCard, FiExternalLink, FiUpload, FiImage, FiVideo,
+  FiMusic, FiSearch, FiEye
 } from 'react-icons/fi'
 import {
   SiOpenai, SiPython, SiTypescript, SiReact, SiDocker, SiKubernetes
@@ -270,6 +271,14 @@ export default function VemarAIStudio() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
   const [showFullResponse, setShowFullResponse] = useState(false)
   const [agentHistory, setAgentHistory] = useState<Record<number, any>>({})
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<number>(0)
+  const [scanResult, setScanResult] = useState<{
+    status: 'authentic' | 'manipulated' | 'suspicious' | null
+    confidence: number
+    details: string[]
+  } | null>(null)
+  const [isScanning, setIsScanning] = useState(false)
 
   const typewriterWords = [
     'a revolutionary AI defense platform',
@@ -421,6 +430,81 @@ export default function VemarAIStudio() {
     }
   }
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const validTypes = ['image/', 'video/', 'audio/']
+    const isValid = validTypes.some(type => file.type.startsWith(type))
+
+    if (!isValid) {
+      setError('Please upload a valid image, video, or audio file.')
+      return
+    }
+
+    setUploadedFile(file)
+    setUploadProgress(0)
+    setScanResult(null)
+    setError(null)
+    setIsScanning(true)
+
+    // Simulate upload progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval)
+          return 100
+        }
+        return prev + 10
+      })
+    }, 200)
+
+    // Simulate AI analysis
+    setTimeout(() => {
+      clearInterval(progressInterval)
+      setUploadProgress(100)
+
+      // Simulate deepfake detection result
+      const mockResults = [
+        {
+          status: 'authentic' as const,
+          confidence: 98.5,
+          details: [
+            'No digital manipulation signatures detected',
+            'Facial consistency analysis passed',
+            'Temporal coherence verified',
+            'Natural lighting patterns confirmed'
+          ]
+        },
+        {
+          status: 'manipulated' as const,
+          confidence: 94.2,
+          details: [
+            'Deepfake artifacts detected in facial region',
+            'Inconsistent eye blinking patterns',
+            'Audio-visual synchronization anomalies',
+            'GAN-based manipulation signatures found'
+          ]
+        },
+        {
+          status: 'suspicious' as const,
+          confidence: 72.8,
+          details: [
+            'Minor inconsistencies in lighting',
+            'Compression artifacts detected',
+            'Partial facial occlusion complicates analysis',
+            'Requires manual review'
+          ]
+        }
+      ]
+
+      const result = mockResults[Math.floor(Math.random() * mockResults.length)]
+      setScanResult(result)
+      setIsScanning(false)
+    }, 3000)
+  }
+
   const renderResponse = (data: any, agentIndex: number) => {
     if (!data) return null
 
@@ -567,6 +651,202 @@ export default function VemarAIStudio() {
               <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-4 py-2">
                 <FiStar className="w-5 h-5 text-yellow-400" />
                 <span className="text-sm">Real-time RAG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Deepfake Detection Upload Section */}
+      <section className="border-b border-slate-800 bg-slate-950">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold mb-3">Verify Media Authenticity</h3>
+              <p className="text-slate-400">Upload any video, audio, or image for instant deepfake detection</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Upload Area */}
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="p-8">
+                  <div className="space-y-6">
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-600 rounded-lg cursor-pointer bg-slate-900/50 hover:bg-slate-900/80 transition-all group"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div className="p-4 bg-blue-500/10 rounded-full mb-4 group-hover:bg-blue-500/20 transition-colors">
+                          <FiUpload className="w-10 h-10 text-blue-400" />
+                        </div>
+                        <p className="mb-2 text-sm text-slate-300">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-slate-500">Video, Audio, or Image files</p>
+                        <div className="flex gap-4 mt-4">
+                          <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <FiVideo className="w-4 h-4" />
+                            Video
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <FiMusic className="w-4 h-4" />
+                            Audio
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <FiImage className="w-4 h-4" />
+                            Image
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        className="hidden"
+                        accept="image/*,video/*,audio/*"
+                        onChange={handleFileUpload}
+                      />
+                    </label>
+
+                    {uploadedFile && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
+                          <FiCheckCircle className="w-5 h-5 text-green-400" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-300 truncate">{uploadedFile.name}</p>
+                            <p className="text-xs text-slate-500">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </div>
+                        </div>
+
+                        {uploadProgress > 0 && uploadProgress < 100 && (
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-xs text-slate-400">
+                              <span>Uploading...</span>
+                              <span>{uploadProgress}%</span>
+                            </div>
+                            <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 transition-all duration-300 rounded-full"
+                                style={{ width: `${uploadProgress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {isScanning && (
+                          <div className="flex items-center justify-center gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                            <FiLoader className="w-5 h-5 text-blue-400 animate-spin" />
+                            <span className="text-sm text-blue-300">Analyzing with neural networks...</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detection Workflow & Results */}
+              <div className="space-y-4">
+                {/* Workflow Steps */}
+                <Card className="bg-slate-800/50 border-slate-700">
+                  <CardContent className="p-6">
+                    <h4 className="font-semibold mb-4 flex items-center gap-2">
+                      <FiSearch className="w-5 h-5 text-purple-400" />
+                      Detection Pipeline
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${uploadedFile ? 'bg-green-500/20' : 'bg-slate-700/50'}`}>
+                          <FiUpload className={`w-5 h-5 ${uploadedFile ? 'text-green-400' : 'text-slate-500'}`} />
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-medium text-slate-300">Upload Content</h5>
+                          <p className="text-xs text-slate-500">Upload any video, audio, or image for analysis</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${isScanning ? 'bg-blue-500/20' : 'bg-slate-700/50'}`}>
+                          <FiCpu className={`w-5 h-5 ${isScanning ? 'text-blue-400' : 'text-slate-500'}`} />
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-medium text-slate-300">AI Deep Scan</h5>
+                          <p className="text-xs text-slate-500">Our neural networks analyze for manipulation signatures</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${scanResult && !isScanning ? 'bg-purple-500/20' : 'bg-slate-700/50'}`}>
+                          <FiEye className={`w-5 h-5 ${scanResult && !isScanning ? 'text-purple-400' : 'text-slate-500'}`} />
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-medium text-slate-300">Pattern Detection</h5>
+                          <p className="text-xs text-slate-500">Identify deepfake artifacts and synthetic markers</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${scanResult && !isScanning ? 'bg-green-500/20' : 'bg-slate-700/50'}`}>
+                          <FiShield className={`w-5 h-5 ${scanResult && !isScanning ? 'text-green-400' : 'text-slate-500'}`} />
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-medium text-slate-300">Verified Result</h5>
+                          <p className="text-xs text-slate-500">Get instant authenticity verification</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Scan Results */}
+                {scanResult && !isScanning && (
+                  <Card className={`border-2 ${
+                    scanResult.status === 'authentic'
+                      ? 'bg-green-500/5 border-green-500/30'
+                      : scanResult.status === 'manipulated'
+                      ? 'bg-red-500/5 border-red-500/30'
+                      : 'bg-yellow-500/5 border-yellow-500/30'
+                  }`}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          {scanResult.status === 'authentic' ? (
+                            <FiCheckCircle className="w-8 h-8 text-green-400" />
+                          ) : scanResult.status === 'manipulated' ? (
+                            <FiAlertCircle className="w-8 h-8 text-red-400" />
+                          ) : (
+                            <FiAlertCircle className="w-8 h-8 text-yellow-400" />
+                          )}
+                          <div>
+                            <h4 className={`text-lg font-bold ${
+                              scanResult.status === 'authentic'
+                                ? 'text-green-300'
+                                : scanResult.status === 'manipulated'
+                                ? 'text-red-300'
+                                : 'text-yellow-300'
+                            }`}>
+                              {scanResult.status === 'authentic'
+                                ? 'Authentic Content'
+                                : scanResult.status === 'manipulated'
+                                ? 'Deepfake Detected'
+                                : 'Suspicious Content'}
+                            </h4>
+                            <p className="text-sm text-slate-400">Confidence: {scanResult.confidence}%</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h5 className="text-sm font-semibold text-slate-300 mb-3">Analysis Details:</h5>
+                        {scanResult.details.map((detail, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-sm">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-500 mt-1.5"></div>
+                            <span className="text-slate-400">{detail}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </div>
