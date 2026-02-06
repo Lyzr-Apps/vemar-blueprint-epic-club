@@ -1,11 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Loader2, Shield, Lightbulb, Brain, Database, Lock, TrendingUp, DollarSign, Download, FileText, Code, CheckCircle, AlertCircle } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  FiShield, FiCpu, FiDatabase, FiLock, FiTrendingUp,
+  FiDollarSign, FiDownload, FiFileText, FiCheckCircle,
+  FiAlertCircle, FiLoader, FiZap, FiBriefcase, FiTarget,
+  FiGrid, FiLayers, FiActivity, FiStar, FiTrendingDown,
+  FiMoon, FiSun, FiMonitor, FiSend, FiRefreshCw, FiMaximize2
+} from 'react-icons/fi'
+import {
+  SiOpenai, SiPython, SiTypescript, SiReact, SiDocker, SiKubernetes
+} from 'react-icons/si'
 
 // TypeScript Interfaces based on actual test responses
 interface FounderCEOResponse {
@@ -116,253 +126,813 @@ interface GTMResponse {
   channels: string[]
 }
 
+interface TAMSAMSOM {
+  tam: string
+  sam: string
+  som: string
+}
+
 interface FundingRound {
   round: string
   amount: string
   use_of_funds: string[]
 }
 
-interface TAMSAMSOMData {
-  tam: string
-  sam: string
-  som: string
-}
-
 interface InvestorResponse {
   investor_narrative: string
-  tam_sam_som: TAMSAMSOMData
+  tam_sam_som: TAMSAMSOM
   funding_rounds: FundingRound[]
   key_metrics: string[]
   pitch_deck_outline: string[]
 }
 
-interface AgentConfig {
-  id: string
-  name: string
-  icon: any
-  color: string
-  description: string
-  defaultQuery: string
-}
-
-const AGENT_CONFIGS: AgentConfig[] = [
+// Agent configuration
+const agents = [
   {
     id: '6985a1bbb37fff3a03c07c44',
-    name: 'Founder/CEO',
-    icon: Lightbulb,
-    color: 'from-purple-500 to-pink-500',
-    description: 'Strategic Vision & Market Positioning',
-    defaultQuery: 'Define VEMAR.AI\'s complete strategic vision, mission, value proposition, and competitive moat for defending against deepfakes and synthetic identity fraud in the enterprise market.'
+    name: 'Founder & CEO',
+    shortName: 'Strategy',
+    icon: FiTarget,
+    gradient: 'from-purple-500 via-pink-500 to-rose-500',
+    bgGradient: 'from-purple-500/10 via-pink-500/10 to-rose-500/10',
+    description: 'Strategic vision, mission, and competitive moat',
+    defaultQuery: 'Define VEMAR.AI\'s complete strategic vision, mission, value proposition, and competitive moat for defending against deepfakes and synthetic identity fraud.',
+    tags: ['Vision', 'Strategy', 'Moat']
   },
   {
     id: '6985a1d176d4fd436bf4b7bd',
     name: 'Product Architect',
-    icon: Code,
-    color: 'from-blue-500 to-cyan-500',
-    description: 'System Design & Architecture',
-    defaultQuery: 'Design the complete product architecture for VEMAR.AI including deepfake detection engine, behavioral biometrics, identity graphs, and API strategy from MVP to V2.'
+    shortName: 'Architecture',
+    icon: FiGrid,
+    gradient: 'from-blue-500 via-cyan-500 to-teal-500',
+    bgGradient: 'from-blue-500/10 via-cyan-500/10 to-teal-500/10',
+    description: 'System architecture and product design',
+    defaultQuery: 'Design the complete product architecture for VEMAR.AI including deepfake detection engine, behavioral biometrics, identity graphs, and API strategy.',
+    tags: ['Architecture', 'API', 'Microservices']
   },
   {
     id: '6985a1fb301c62c7ca2c7daf',
     name: 'AI/ML Research',
-    icon: Brain,
-    color: 'from-green-500 to-emerald-500',
-    description: 'Model Architecture & Evaluation',
-    defaultQuery: 'Design the ML model architectures for deepfake detection, behavioral biometrics, and liveness detection with specific datasets, evaluation metrics, and latency targets.'
+    shortName: 'AI Models',
+    icon: FiCpu,
+    gradient: 'from-green-500 via-emerald-500 to-teal-500',
+    bgGradient: 'from-green-500/10 via-emerald-500/10 to-teal-500/10',
+    description: 'ML model design and evaluation',
+    defaultQuery: 'Design the ML model architectures for deepfake detection, behavioral biometrics, and liveness detection with specific datasets and evaluation metrics.',
+    tags: ['Deep Learning', 'CNN', 'Transformers']
   },
   {
     id: '6985a21376d4fd436bf4b7c1',
     name: 'RAG & Knowledge',
-    icon: Database,
-    color: 'from-yellow-500 to-orange-500',
-    description: 'Data Systems & Knowledge Management',
-    defaultQuery: 'Design the vector database schema, knowledge ingestion pipeline, and RAG workflow for fraud pattern memory and identity graphs in VEMAR.AI.'
+    shortName: 'Data Systems',
+    icon: FiDatabase,
+    gradient: 'from-yellow-500 via-orange-500 to-red-500',
+    bgGradient: 'from-yellow-500/10 via-orange-500/10 to-red-500/10',
+    description: 'RAG workflows and knowledge management',
+    defaultQuery: 'Design the vector database schema, knowledge ingestion pipeline, and RAG workflow for fraud pattern memory and identity graphs.',
+    tags: ['Vector DB', 'RAG', 'Embeddings']
   },
   {
     id: '6985a22af7f7d3ffa5d8664c',
     name: 'Security & Compliance',
-    icon: Lock,
-    color: 'from-red-500 to-rose-500',
-    description: 'Trust, Safety & Compliance',
-    defaultQuery: 'Create comprehensive security architecture and compliance roadmap covering GDPR, DPDP, SOC-2, ISO-27001, threat modeling, and data retention policies.'
+    shortName: 'Security',
+    icon: FiLock,
+    gradient: 'from-red-500 via-rose-500 to-pink-500',
+    bgGradient: 'from-red-500/10 via-rose-500/10 to-pink-500/10',
+    description: 'Security architecture and compliance',
+    defaultQuery: 'Create comprehensive security architecture and compliance roadmap covering GDPR, DPDP, SOC-2, ISO-27001, and threat modeling.',
+    tags: ['GDPR', 'SOC-2', 'Zero Trust']
   },
   {
     id: '6985a2455eb49186d63e5dc9',
     name: 'GTM & Growth',
-    icon: TrendingUp,
-    color: 'from-indigo-500 to-purple-500',
-    description: 'Market Strategy & Growth',
-    defaultQuery: 'Define ideal customer profiles, buyer personas, pricing tiers (API/SaaS/Enterprise/Government), and 0-to-1 acquisition strategy for VEMAR.AI.'
+    shortName: 'Growth',
+    icon: FiTrendingUp,
+    gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+    bgGradient: 'from-indigo-500/10 via-purple-500/10 to-pink-500/10',
+    description: 'Go-to-market and customer acquisition',
+    defaultQuery: 'Define ideal customer profiles, buyer personas, pricing tiers, and 0-to-1 acquisition strategy for VEMAR.AI.',
+    tags: ['ICP', 'Pricing', 'Sales']
   },
   {
     id: '6985a25f8ce1fc653cfdee55',
-    name: 'Investor/Fundraising',
-    icon: DollarSign,
-    color: 'from-teal-500 to-cyan-500',
-    description: 'Capital Strategy & Metrics',
-    defaultQuery: 'Create investor narrative, TAM/SAM/SOM calculations, funding roadmap, key metrics, and pitch deck outline for VEMAR.AI fundraising.'
+    name: 'Investor & Fundraising',
+    shortName: 'Capital',
+    icon: FiDollarSign,
+    gradient: 'from-teal-500 via-cyan-500 to-blue-500',
+    bgGradient: 'from-teal-500/10 via-cyan-500/10 to-blue-500/10',
+    description: 'Investor narrative and metrics',
+    defaultQuery: 'Create investor narrative, TAM/SAM/SOM calculations, funding roadmap, and pitch deck outline for VEMAR.AI.',
+    tags: ['TAM/SAM/SOM', 'Pitch Deck', 'VC']
   }
 ]
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState(0)
-  const [query, setQuery] = useState(AGENT_CONFIGS[0].defaultQuery)
-  const [loading, setLoading] = useState(false)
-  const [response, setResponse] = useState<any>(null)
-  const [error, setError] = useState<string | null>(null)
+// Typewriter effect hook
+const useTypewriter = (words: string[], delay = 100) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [currentText, setCurrentText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleTabChange = (index: number) => {
-    setActiveTab(index)
-    setQuery(AGENT_CONFIGS[index].defaultQuery)
-    setResponse(null)
-    setError(null)
+  useEffect(() => {
+    const word = words[currentWordIndex]
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (currentText.length < word.length) {
+          setCurrentText(word.slice(0, currentText.length + 1))
+        } else {
+          setTimeout(() => setIsDeleting(true), 2000)
+        }
+      } else {
+        if (currentText.length > 0) {
+          setCurrentText(word.slice(0, currentText.length - 1))
+        } else {
+          setIsDeleting(false)
+          setCurrentWordIndex((prev) => (prev + 1) % words.length)
+        }
+      }
+    }, isDeleting ? delay / 2 : delay)
+
+    return () => clearTimeout(timeout)
+  }, [currentText, currentWordIndex, isDeleting, words, delay])
+
+  return currentText
+}
+
+export default function VemarAIStudio() {
+  const [activeAgent, setActiveAgent] = useState(0)
+  const [query, setQuery] = useState('')
+  const [response, setResponse] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark')
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
+  const [showFullResponse, setShowFullResponse] = useState(false)
+  const [agentHistory, setAgentHistory] = useState<Record<number, any>>({})
+
+  const typewriterWords = [
+    'a revolutionary AI defense platform',
+    'enterprise-grade deepfake detection',
+    'behavioral biometric systems',
+    'identity fraud prevention',
+    'synthetic media verification',
+    'digital clone defense'
+  ]
+
+  const heroText = useTypewriter(typewriterWords, 80)
+
+  // Theme management
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('vemar-theme') as 'light' | 'dark' | 'system' | null
+    if (savedTheme) {
+      setTheme(savedTheme)
+      applyTheme(savedTheme)
+    }
+  }, [])
+
+  const applyTheme = (newTheme: 'light' | 'dark' | 'system') => {
+    const root = document.documentElement
+    if (newTheme === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      root.classList.toggle('dark', isDark)
+    } else {
+      root.classList.toggle('dark', newTheme === 'dark')
+    }
   }
 
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    setTheme(newTheme)
+    localStorage.setItem('vemar-theme', newTheme)
+    applyTheme(newTheme)
+  }
+
+  // Auto-save simulation
+  useEffect(() => {
+    if (response) {
+      setAutoSaveStatus('saving')
+      const timeout = setTimeout(() => {
+        setAutoSaveStatus('saved')
+        setAgentHistory(prev => ({
+          ...prev,
+          [activeAgent]: response
+        }))
+      }, 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [response, activeAgent])
+
   const handleConsultAgent = async () => {
+    const agent = agents[activeAgent]
+    const queryToSend = query.trim() || agent.defaultQuery
+
     setLoading(true)
     setError(null)
     setResponse(null)
 
-    const agentId = AGENT_CONFIGS[activeTab].id
-    const result = await callAIAgent(query, agentId)
+    try {
+      const result = await callAIAgent(agent.id, queryToSend)
 
-    setLoading(false)
-
-    if (result.success && result.response.status === 'success') {
-      setResponse(result.response.result)
-    } else {
-      setError(result.error || 'Failed to get response from agent')
+      if (result.status === 'success') {
+        setResponse(result.result)
+      } else {
+        setError('Agent returned an error. Please try again.')
+      }
+    } catch (err) {
+      setError('Failed to connect to agent. Please check your connection.')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const exportAsJSON = () => {
+  const handleExportJSON = () => {
     if (!response) return
+    const dataStr = JSON.stringify(response, null, 2)
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+    const exportFileDefaultName = `vemar-${agents[activeAgent].shortName.toLowerCase()}-${Date.now()}.json`
 
-    const data = {
-      agent: AGENT_CONFIGS[activeTab].name,
-      query,
-      response,
-      timestamp: new Date().toISOString()
-    }
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `vemar-${AGENT_CONFIGS[activeTab].name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    const linkElement = document.createElement('a')
+    linkElement.setAttribute('href', dataUri)
+    linkElement.setAttribute('download', exportFileDefaultName)
+    linkElement.click()
   }
 
-  const exportBlueprint = () => {
+  const handleExportBlueprint = () => {
     const blueprint = {
-      company: 'VEMAR.AI',
-      tagline: 'AI-Native Defense Against Deepfakes & Synthetic Identity Fraud',
-      generated: new Date().toISOString(),
-      agents: AGENT_CONFIGS.map(agent => agent.name),
-      note: 'Complete venture studio blueprint - consult each agent for detailed insights'
+      timestamp: new Date().toISOString(),
+      agents: agents.map((agent, idx) => ({
+        name: agent.name,
+        response: agentHistory[idx] || null
+      }))
     }
 
-    const blob = new Blob([JSON.stringify(blueprint, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `vemar-ai-complete-blueprint-${Date.now()}.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    const dataStr = JSON.stringify(blueprint, null, 2)
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+    const exportFileDefaultName = `vemar-ai-complete-blueprint-${Date.now()}.json`
+
+    const linkElement = document.createElement('a')
+    linkElement.setAttribute('href', dataUri)
+    linkElement.setAttribute('download', exportFileDefaultName)
+    linkElement.click()
   }
 
-  const renderFounderCEOResponse = (data: FounderCEOResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-purple-500/30">
+  const renderResponse = (data: any, agentIndex: number) => {
+    if (!data) return null
+
+    switch (agentIndex) {
+      case 0: // Founder & CEO
+        return <FounderCEORenderer data={data as FounderCEOResponse} />
+      case 1: // Product Architect
+        return <ProductArchitectRenderer data={data as ProductArchitectResponse} />
+      case 2: // AI/ML Research
+        return <AIMLRenderer data={data as AIMLResponse} />
+      case 3: // RAG & Knowledge
+        return <RAGRenderer data={data as RAGResponse} />
+      case 4: // Security & Compliance
+        return <SecurityRenderer data={data as SecurityResponse} />
+      case 5: // GTM & Growth
+        return <GTMRenderer data={data as GTMResponse} />
+      case 6: // Investor & Fundraising
+        return <InvestorRenderer data={data as InvestorResponse} />
+      default:
+        return null
+    }
+  }
+
+  const currentAgent = agents[activeAgent]
+  const hasHistory = Object.keys(agentHistory).length > 0
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur-lg opacity-50"></div>
+                <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-2">
+                  <FiShield className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  VEMAR.AI
+                </h1>
+                <p className="text-xs text-slate-400">Multi-Agent Venture Studio</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Auto-save status */}
+              <div className="flex items-center gap-2 text-xs">
+                {autoSaveStatus === 'saving' && (
+                  <>
+                    <FiLoader className="w-3 h-3 animate-spin text-blue-400" />
+                    <span className="text-slate-400">Saving...</span>
+                  </>
+                )}
+                {autoSaveStatus === 'saved' && (
+                  <>
+                    <FiCheckCircle className="w-3 h-3 text-green-400" />
+                    <span className="text-slate-400">Up to date</span>
+                  </>
+                )}
+              </div>
+
+              {/* Theme switcher */}
+              <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-1">
+                <button
+                  onClick={() => handleThemeChange('light')}
+                  className={`p-2 rounded ${theme === 'light' ? 'bg-slate-700' : 'hover:bg-slate-700/50'} transition-colors`}
+                  title="Light mode"
+                >
+                  <FiSun className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleThemeChange('dark')}
+                  className={`p-2 rounded ${theme === 'dark' ? 'bg-slate-700' : 'hover:bg-slate-700/50'} transition-colors`}
+                  title="Dark mode"
+                >
+                  <FiMoon className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleThemeChange('system')}
+                  className={`p-2 rounded ${theme === 'system' ? 'bg-slate-700' : 'hover:bg-slate-700/50'} transition-colors`}
+                  title="System theme"
+                >
+                  <FiMonitor className="w-4 h-4" />
+                </button>
+              </div>
+
+              <Button
+                onClick={handleExportBlueprint}
+                disabled={!hasHistory}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
+              >
+                <FiDownload className="w-4 h-4 mr-2" />
+                Export Blueprint
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="border-b border-slate-800 bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2 mb-6">
+              <FiZap className="w-4 h-4 text-blue-400" />
+              <span className="text-sm text-blue-300">AI-Powered Digital Clone Defense</span>
+            </div>
+
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              Design, Validate, and Build
+              <br />
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                {heroText}
+                <span className="animate-pulse">|</span>
+              </span>
+            </h2>
+
+            <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
+              A collaborative multi-agent RAG system that designs your startup from zero to scalable product.
+              Consult 7 specialized AI agents for strategic vision, product architecture, and market strategy.
+            </p>
+
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-4 py-2">
+                <FiActivity className="w-5 h-5 text-green-400" />
+                <span className="text-sm">7 Active Agents</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-4 py-2">
+                <SiOpenai className="w-5 h-5 text-purple-400" />
+                <span className="text-sm">GPT-4o Powered</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-4 py-2">
+                <FiStar className="w-5 h-5 text-yellow-400" />
+                <span className="text-sm">Real-time RAG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Agent Tabs */}
+        <div className="mb-8 overflow-x-auto">
+          <div className="flex gap-2 pb-2 min-w-max">
+            {agents.map((agent, index) => {
+              const Icon = agent.icon
+              const isActive = activeAgent === index
+              const hasData = agentHistory[index]
+
+              return (
+                <button
+                  key={agent.id}
+                  onClick={() => setActiveAgent(index)}
+                  className={`group relative flex items-center gap-3 px-6 py-4 rounded-xl border transition-all ${
+                    isActive
+                      ? `bg-gradient-to-br ${agent.bgGradient} border-slate-700 shadow-lg scale-105`
+                      : 'bg-slate-800/30 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'
+                  }`}
+                >
+                  {hasData && (
+                    <div className="absolute top-2 right-2">
+                      <FiCheckCircle className="w-4 h-4 text-green-400" />
+                    </div>
+                  )}
+
+                  <div className={`p-2 rounded-lg bg-gradient-to-br ${agent.gradient} ${isActive ? 'shadow-lg' : 'opacity-70 group-hover:opacity-100'}`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+
+                  <div className="text-left">
+                    <div className="font-semibold text-sm">{agent.shortName}</div>
+                    <div className="text-xs text-slate-400 flex gap-1 flex-wrap mt-1">
+                      {agent.tags.slice(0, 2).map(tag => (
+                        <span key={tag} className="bg-slate-700/50 px-1.5 py-0.5 rounded">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Left Column - Input & Controls */}
+          <div className="space-y-6">
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${currentAgent.gradient}`}>
+                    <currentAgent.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl mb-2">{currentAgent.name}</CardTitle>
+                    <CardDescription className="text-slate-400">
+                      {currentAgent.description}
+                    </CardDescription>
+                    <div className="flex gap-2 mt-3 flex-wrap">
+                      {currentAgent.tags.map(tag => (
+                        <span
+                          key={tag}
+                          className="text-xs bg-slate-700/50 text-slate-300 px-2 py-1 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Your Query
+                  </label>
+                  <Textarea
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder={currentAgent.defaultQuery}
+                    className="min-h-[120px] bg-slate-900/50 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20"
+                  />
+                  <div className="flex justify-between items-center mt-2 text-xs text-slate-500">
+                    <span>Leave empty to use default query</span>
+                    <span>{query.length} characters</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleConsultAgent}
+                    disabled={loading}
+                    className={`flex-1 bg-gradient-to-r ${currentAgent.gradient} hover:opacity-90 text-white border-0 h-11`}
+                  >
+                    {loading ? (
+                      <>
+                        <FiLoader className="w-4 h-4 mr-2 animate-spin" />
+                        Consulting Agent...
+                      </>
+                    ) : (
+                      <>
+                        <FiSend className="w-4 h-4 mr-2" />
+                        Consult Agent
+                      </>
+                    )}
+                  </Button>
+
+                  {response && (
+                    <Button
+                      onClick={handleExportJSON}
+                      variant="outline"
+                      className="bg-slate-700/50 border-slate-600 hover:bg-slate-700"
+                    >
+                      <FiDownload className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+
+                {error && (
+                  <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <FiAlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                    <span className="text-sm text-red-300">{error}</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiZap className="w-5 h-5 text-yellow-400" />
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-3">
+                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                  <FiFileText className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm">Pitch Deck</span>
+                </button>
+                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                  <FiLayers className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm">Tech Stack</span>
+                </button>
+                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                  <FiTrendingUp className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm">Roadmap</span>
+                </button>
+                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                  <FiBriefcase className="w-5 h-5 text-orange-400 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm">Business Plan</span>
+                </button>
+              </CardContent>
+            </Card>
+
+            {/* Agent Collaboration */}
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FiActivity className="w-5 h-5 text-green-400" />
+                  Agent Collaboration
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {agents.map((agent, idx) => {
+                    const Icon = agent.icon
+                    const hasResponse = agentHistory[idx]
+                    return (
+                      <div
+                        key={agent.id}
+                        className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
+                          hasResponse ? 'bg-green-500/10 border border-green-500/20' : 'bg-slate-700/20'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 ${hasResponse ? 'text-green-400' : 'text-slate-500'}`} />
+                        <span className="text-sm flex-1">{agent.shortName}</span>
+                        {hasResponse ? (
+                          <FiCheckCircle className="w-4 h-4 text-green-400" />
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-slate-600"></div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Response Display */}
+          <div className="space-y-6">
+            {loading && (
+              <Card className="bg-slate-800/50 border-slate-700">
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <div className="relative">
+                      <div className={`absolute inset-0 bg-gradient-to-r ${currentAgent.gradient} rounded-full blur-xl opacity-50 animate-pulse`}></div>
+                      <div className={`relative bg-gradient-to-r ${currentAgent.gradient} rounded-full p-4`}>
+                        <FiLoader className="w-8 h-8 text-white animate-spin" />
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-semibold mb-1">Consulting {currentAgent.name}...</p>
+                      <p className="text-sm text-slate-400">Retrieving insights from AI models</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {response && !loading && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <FiCheckCircle className="w-5 h-5 text-green-400" />
+                    Agent Response
+                  </h3>
+                  <button
+                    onClick={() => setShowFullResponse(!showFullResponse)}
+                    className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300"
+                  >
+                    <FiMaximize2 className="w-4 h-4" />
+                    {showFullResponse ? 'Collapse' : 'Expand'}
+                  </button>
+                </div>
+
+                <div className={showFullResponse ? '' : 'max-h-[600px] overflow-y-auto'}>
+                  {renderResponse(response, activeAgent)}
+                </div>
+              </div>
+            )}
+
+            {!response && !loading && (
+              <Card className="bg-slate-800/50 border-slate-700 border-dashed">
+                <CardContent className="py-12">
+                  <div className="text-center space-y-4">
+                    <div className={`inline-flex p-4 rounded-full bg-gradient-to-r ${currentAgent.gradient} opacity-20`}>
+                      <currentAgent.icon className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <p className="text-slate-400 mb-2">No response yet</p>
+                      <p className="text-sm text-slate-500">
+                        Click "Consult Agent" to get insights from {currentAgent.name}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <FiShield className="w-4 h-4 text-blue-400" />
+                VEMAR.AI
+              </h4>
+              <p className="text-sm text-slate-400">
+                AI-powered Digital Clone Defense & Identity Protection platform.
+                Defending against deepfakes and synthetic identity fraud.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">Technology Stack</h4>
+              <div className="flex gap-3">
+                <SiOpenai className="w-6 h-6 text-slate-400 hover:text-purple-400 transition-colors" title="OpenAI GPT-4o" />
+                <SiReact className="w-6 h-6 text-slate-400 hover:text-cyan-400 transition-colors" title="React" />
+                <SiTypescript className="w-6 h-6 text-slate-400 hover:text-blue-400 transition-colors" title="TypeScript" />
+                <SiDocker className="w-6 h-6 text-slate-400 hover:text-blue-500 transition-colors" title="Docker" />
+                <SiKubernetes className="w-6 h-6 text-slate-400 hover:text-blue-600 transition-colors" title="Kubernetes" />
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3">System Status</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                  <span className="text-slate-400">All agents operational</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                  <span className="text-slate-400">API status: healthy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-sm text-slate-500">
+            Built by Architect at Lyzr - Multi-Agent Venture Studio Platform
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+// Response Renderer Components
+function FounderCEORenderer({ data }: { data: FounderCEOResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
         <CardHeader>
-          <CardTitle className="text-purple-400">Value Proposition</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-purple-300">
+            <FiTarget className="w-5 h-5" />
+            Value Proposition
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300">{data.value_proposition}</p>
+          <p className="text-lg text-slate-200">{data.value_proposition}</p>
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-blue-400">Mission</CardTitle>
+            <CardTitle className="text-base text-slate-300">Mission</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-300">{data.mission}</p>
+            <p className="text-slate-400">{data.mission}</p>
           </CardContent>
         </Card>
 
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-blue-400">Vision</CardTitle>
+            <CardTitle className="text-base text-slate-300">Vision</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-300">{data.vision}</p>
+            <p className="text-slate-400">{data.vision}</p>
           </CardContent>
         </Card>
       </div>
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-green-400">Market Positioning</CardTitle>
+          <CardTitle className="text-base text-slate-300">Market Positioning</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300">{data.positioning}</p>
+          <p className="text-slate-400">{data.positioning}</p>
         </CardContent>
       </Card>
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-yellow-400">North Star Metrics</CardTitle>
+          <CardTitle className="text-base text-slate-300 flex items-center gap-2">
+            <FiActivity className="w-4 h-4" />
+            North Star Metrics
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {data.north_star_metrics.map((metric, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-gray-300">
-                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>{metric}</span>
+            {data.north_star_metrics?.map((metric, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <FiCheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-400">{metric}</span>
               </li>
             ))}
           </ul>
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-orange-900/20 to-red-900/20 border-orange-500/30">
+      <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-orange-400">Competitive Moat Strategy</CardTitle>
+          <CardTitle className="text-base text-slate-300 flex items-center gap-2">
+            <FiShield className="w-4 h-4" />
+            Competitive Moat
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300">{data.moat_strategy}</p>
+          <p className="text-slate-400">{data.moat_strategy}</p>
         </CardContent>
       </Card>
     </div>
   )
+}
 
-  const renderProductArchitectResponse = (data: ProductArchitectResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border-blue-500/30">
+function ProductArchitectRenderer({ data }: { data: ProductArchitectResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/20">
         <CardHeader>
-          <CardTitle className="text-blue-400">System Architecture</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-blue-300">
+            <FiGrid className="w-5 h-5" />
+            System Architecture
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300 whitespace-pre-wrap">{data.system_architecture}</p>
+          <p className="text-slate-300">{data.system_architecture}</p>
         </CardContent>
       </Card>
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-purple-400">Core Modules</CardTitle>
+          <CardTitle className="text-base text-slate-300">Core Modules</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
-            {data.core_modules.map((module, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <h4 className="font-semibold text-white mb-2">{module.name}</h4>
-                <p className="text-gray-400 text-sm mb-2">{module.description}</p>
-                <div className="flex items-center gap-2 text-xs text-blue-400">
-                  <Code className="w-4 h-4" />
-                  <span>{module.tech_stack}</span>
+          <div className="grid gap-3">
+            {data.core_modules?.map((module, idx) => (
+              <div key={idx} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <h4 className="font-semibold text-slate-200 mb-2 flex items-center gap-2">
+                  <FiLayers className="w-4 h-4 text-blue-400" />
+                  {module.name}
+                </h4>
+                <p className="text-sm text-slate-400 mb-2">{module.description}</p>
+                <div className="flex items-center gap-2 text-xs">
+                  <SiPython className="w-3 h-3 text-slate-500" />
+                  <span className="text-slate-500">{module.tech_stack}</span>
                 </div>
               </div>
             ))}
@@ -370,17 +940,17 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-4">
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-green-400 text-lg">MVP Features</CardTitle>
+            <CardTitle className="text-sm text-slate-300">MVP Features</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {data.mvp_features.map((feature, idx) => (
-                <li key={idx} className="text-gray-300 text-sm flex items-start gap-2">
-                  <span className="text-green-500 mt-1">•</span>
-                  <span>{feature}</span>
+              {data.mvp_features?.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm">
+                  <FiCheckCircle className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-400">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -389,14 +959,14 @@ export default function Home() {
 
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-yellow-400 text-lg">V1 Features</CardTitle>
+            <CardTitle className="text-sm text-slate-300">V1 Features</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {data.v1_features.map((feature, idx) => (
-                <li key={idx} className="text-gray-300 text-sm flex items-start gap-2">
-                  <span className="text-yellow-500 mt-1">•</span>
-                  <span>{feature}</span>
+              {data.v1_features?.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm">
+                  <FiCheckCircle className="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-400">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -405,14 +975,14 @@ export default function Home() {
 
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-orange-400 text-lg">V2 Features</CardTitle>
+            <CardTitle className="text-sm text-slate-300">V2 Features</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {data.v2_features.map((feature, idx) => (
-                <li key={idx} className="text-gray-300 text-sm flex items-start gap-2">
-                  <span className="text-orange-500 mt-1">•</span>
-                  <span>{feature}</span>
+              {data.v2_features?.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm">
+                  <FiCheckCircle className="w-3 h-3 text-purple-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-slate-400">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -422,318 +992,144 @@ export default function Home() {
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-cyan-400">API Strategy</CardTitle>
+          <CardTitle className="text-base text-slate-300">API Strategy</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-300">{data.api_strategy}</p>
+          <p className="text-slate-400">{data.api_strategy}</p>
         </CardContent>
       </Card>
     </div>
   )
+}
 
-  const renderAIMLResponse = (data: AIMLResponse) => (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border-green-500/30">
-          <CardHeader>
-            <CardTitle className="text-green-400 text-lg">Deepfake Detection Model</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 uppercase">Architecture</p>
-              <p className="text-gray-300">{data.deepfake_model.architecture}</p>
-            </div>
-            {data.deepfake_model.backbone && (
-              <div>
-                <p className="text-xs text-gray-500 uppercase">Backbone</p>
-                <p className="text-gray-300">{data.deepfake_model.backbone}</p>
-              </div>
-            )}
-            {data.deepfake_model.training_data && (
-              <div>
-                <p className="text-xs text-gray-500 uppercase">Training Data</p>
-                <p className="text-gray-300">{data.deepfake_model.training_data}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border-blue-500/30">
-          <CardHeader>
-            <CardTitle className="text-blue-400 text-lg">Behavioral Biometrics Model</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 uppercase">Architecture</p>
-              <p className="text-gray-300">{data.behavioral_biometrics_model.architecture}</p>
-            </div>
-            {data.behavioral_biometrics_model.features && (
-              <div>
-                <p className="text-xs text-gray-500 uppercase mb-2">Features</p>
-                <ul className="space-y-1">
-                  {data.behavioral_biometrics_model.features.map((feature, idx) => (
-                    <li key={idx} className="text-gray-300 text-sm flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-blue-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-purple-500/30">
-          <CardHeader>
-            <CardTitle className="text-purple-400 text-lg">Liveness Detection Model</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 uppercase">Architecture</p>
-              <p className="text-gray-300">{data.liveness_model.architecture}</p>
-            </div>
-            {data.liveness_model.challenge_types && (
-              <div>
-                <p className="text-xs text-gray-500 uppercase mb-2">Challenge Types</p>
-                <ul className="space-y-1">
-                  {data.liveness_model.challenge_types.map((type, idx) => (
-                    <li key={idx} className="text-gray-300 text-sm flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-purple-500" />
-                      {type}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-yellow-400">Evaluation Metrics</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {data.evaluation_metrics.map((metric, idx) => (
-                <li key={idx} className="text-gray-300 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  {metric}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-cyan-400">Performance Targets</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 uppercase">Latency Target</p>
-              <p className="text-gray-300 text-lg font-semibold">{data.latency_target}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase">Accuracy Target</p>
-              <p className="text-gray-300 text-lg font-semibold">{data.accuracy_target}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  )
-
-  const renderRAGResponse = (data: RAGResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 border-yellow-500/30">
+function AIMLRenderer({ data }: { data: AIMLResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/20">
         <CardHeader>
-          <CardTitle className="text-yellow-400">Vector Database Schema</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-green-300">
+            <FiCpu className="w-5 h-5" />
+            Deepfake Detection Model
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <span className="text-xs text-slate-500">Architecture</span>
+              <p className="text-slate-300">{data.deepfake_model?.architecture}</p>
+            </div>
+            <div>
+              <span className="text-xs text-slate-500">Backbone</span>
+              <p className="text-slate-300">{data.deepfake_model?.backbone}</p>
+            </div>
+          </div>
+          <div>
+            <span className="text-xs text-slate-500">Training Data</span>
+            <p className="text-slate-300">{data.deepfake_model?.training_data}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Behavioral Biometrics</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div>
+              <span className="text-xs text-slate-500">Architecture</span>
+              <p className="text-sm text-slate-300">{data.behavioral_biometrics_model?.architecture}</p>
+            </div>
+            <div>
+              <span className="text-xs text-slate-500">Features</span>
+              <ul className="space-y-1 mt-2">
+                {data.behavioral_biometrics_model?.features?.map((feature, idx) => (
+                  <li key={idx} className="flex items-center gap-2 text-sm">
+                    <div className="w-1 h-1 rounded-full bg-green-400"></div>
+                    <span className="text-slate-400">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Liveness Detection</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div>
+              <span className="text-xs text-slate-500">Architecture</span>
+              <p className="text-sm text-slate-300">{data.liveness_model?.architecture}</p>
+            </div>
+            <div>
+              <span className="text-xs text-slate-500">Challenge Types</span>
+              <ul className="space-y-1 mt-2">
+                {data.liveness_model?.challenge_types?.map((type, idx) => (
+                  <li key={idx} className="flex items-center gap-2 text-sm">
+                    <div className="w-1 h-1 rounded-full bg-blue-400"></div>
+                    <span className="text-slate-400">{type}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Evaluation Metrics</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
-            {data.vector_db_schema.collections.map((collection, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <h4 className="font-semibold text-white mb-2">{collection.name}</h4>
-                <div className="space-y-1 text-sm">
-                  <p className="text-gray-400">Type: <span className="text-yellow-400">{collection.embedding_type}</span></p>
-                  <p className="text-gray-400">Dimensions: <span className="text-yellow-400">{collection.dimensions}</span></p>
+            <div className="space-y-2">
+              {data.evaluation_metrics?.map((metric, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <FiCheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-sm text-slate-400">{metric}</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-blue-400">Knowledge Sources</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-3">
-            {data.knowledge_sources.map((source, idx) => (
-              <div key={idx} className="flex items-center gap-2 p-3 bg-slate-900/50 rounded-lg border border-slate-700">
-                <Database className="w-5 h-5 text-blue-400" />
-                <span className="text-gray-300">{source}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 border-purple-500/30">
-        <CardHeader>
-          <CardTitle className="text-purple-400">RAG Workflow</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-            <h4 className="font-semibold text-green-400 mb-2">1. Retrieve</h4>
-            <p className="text-gray-300 text-sm">{data.rag_workflow.retrieve}</p>
-          </div>
-          <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-            <h4 className="font-semibold text-yellow-400 mb-2">2. Reason</h4>
-            <p className="text-gray-300 text-sm">{data.rag_workflow.reason}</p>
-          </div>
-          <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-            <h4 className="font-semibold text-orange-400 mb-2">3. Act</h4>
-            <p className="text-gray-300 text-sm">{data.rag_workflow.act}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-cyan-400">Explainability Approach</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-300">{data.explainability_approach}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-pink-400">Identity Memory Design</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-300">{data.identity_memory_design}</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  )
-
-  const renderSecurityResponse = (data: SecurityResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-red-900/20 to-rose-900/20 border-red-500/30">
-        <CardHeader>
-          <CardTitle className="text-red-400">Security Architecture</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-300 whitespace-pre-wrap">{data.security_architecture}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-green-400">Compliance Roadmap</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-4">
-            {data.compliance_roadmap.map((item, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold text-white">{item.standard}</h4>
-                  <span className="text-xs px-2 py-1 bg-green-900/50 text-green-400 rounded">{item.timeline}</span>
-                </div>
-                <ul className="space-y-1">
-                  {item.key_controls.map((control, cidx) => (
-                    <li key={cidx} className="text-gray-400 text-sm flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{control}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-orange-400">Threat Model</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {data.threat_model.map((threat, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-white mb-2">{threat.threat}</h4>
-                    <p className="text-gray-400 text-sm">{threat.mitigation}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-yellow-400">Data Retention Policy</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-300">{data.data_retention_policy}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-purple-400">Privacy Techniques</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {data.privacy_techniques.map((technique, idx) => (
-                <li key={idx} className="text-gray-300 flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-purple-500" />
-                  {technique}
-                </li>
               ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+            <div className="space-y-2">
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <span className="text-xs text-blue-300">Latency Target</span>
+                <p className="text-lg font-semibold text-blue-200">{data.latency_target}</p>
+              </div>
+              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <span className="text-xs text-green-300">Accuracy Target</span>
+                <p className="text-lg font-semibold text-green-200">{data.accuracy_target}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
+}
 
-  const renderGTMResponse = (data: GTMResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border-indigo-500/30">
+function RAGRenderer({ data }: { data: RAGResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
         <CardHeader>
-          <CardTitle className="text-indigo-400">Ideal Customer Profiles (ICPs)</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-yellow-300">
+            <FiDatabase className="w-5 h-5" />
+            Vector Database Schema
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-4">
-            {data.icps.map((icp, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold text-white">{icp.segment}</h4>
-                  <span className="text-xs px-2 py-1 bg-indigo-900/50 text-indigo-400 rounded">{icp.budget_range}</span>
+          <div className="grid gap-3">
+            {data.vector_db_schema?.collections?.map((collection, idx) => (
+              <div key={idx} className="p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-slate-200">{collection.name}</h4>
+                  <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">
+                    {collection.dimensions}D
+                  </span>
                 </div>
-                <p className="text-xs text-gray-500 uppercase mb-2">Pain Points:</p>
-                <ul className="space-y-1">
-                  {icp.pain_points.map((pain, pidx) => (
-                    <li key={pidx} className="text-gray-400 text-sm flex items-start gap-2">
-                      <span className="text-red-500 mt-1">•</span>
-                      <span>{pain}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm text-slate-400">{collection.embedding_type}</p>
               </div>
             ))}
           </div>
@@ -742,133 +1138,114 @@ export default function Home() {
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-blue-400">Buyer Personas</CardTitle>
+          <CardTitle className="text-base text-slate-300">Knowledge Sources</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            {data.buyer_personas.map((persona, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <h4 className="font-semibold text-white mb-3">{persona.title}</h4>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase">Goals</p>
-                    <p className="text-gray-300 text-sm">{persona.goals}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase">Objections</p>
-                    <p className="text-gray-400 text-sm">{persona.objections}</p>
-                  </div>
-                </div>
-              </div>
+          <ul className="space-y-2">
+            {data.knowledge_sources?.map((source, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <FiCheckCircle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-400">{source}</span>
+              </li>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border-green-500/30">
-        <CardHeader>
-          <CardTitle className="text-green-400">Pricing Tiers</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-4 gap-4">
-            {data.pricing_tiers.map((tier, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                <h4 className="font-semibold text-white mb-1">{tier.tier}</h4>
-                <p className="text-green-400 text-lg font-bold mb-3">{tier.price}</p>
-                <ul className="space-y-1">
-                  {tier.features.map((feature, fidx) => (
-                    <li key={fidx} className="text-gray-400 text-xs flex items-start gap-2">
-                      <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-yellow-400">0-to-1 Strategy</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-300">{data.zero_to_one_strategy}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800/50 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-cyan-400">Growth Channels</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {data.channels.map((channel, idx) => (
-                <li key={idx} className="text-gray-300 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-cyan-500" />
-                  {channel}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  )
-
-  const renderInvestorResponse = (data: InvestorResponse) => (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-teal-900/20 to-cyan-900/20 border-teal-500/30">
-        <CardHeader>
-          <CardTitle className="text-teal-400">Investor Narrative</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-300 text-lg leading-relaxed">{data.investor_narrative}</p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-purple-500/30">
-        <CardHeader>
-          <CardTitle className="text-purple-400">TAM / SAM / SOM</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700 text-center">
-              <p className="text-xs text-gray-500 uppercase mb-2">Total Addressable Market</p>
-              <p className="text-purple-400 text-2xl font-bold">{data.tam_sam_som.tam}</p>
-            </div>
-            <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700 text-center">
-              <p className="text-xs text-gray-500 uppercase mb-2">Serviceable Addressable Market</p>
-              <p className="text-blue-400 text-2xl font-bold">{data.tam_sam_som.sam}</p>
-            </div>
-            <div className="p-4 bg-slate-900/50 rounded-lg border border-slate-700 text-center">
-              <p className="text-xs text-gray-500 uppercase mb-2">Serviceable Obtainable Market</p>
-              <p className="text-green-400 text-2xl font-bold">{data.tam_sam_som.som}</p>
-            </div>
-          </div>
+          </ul>
         </CardContent>
       </Card>
 
       <Card className="bg-slate-800/50 border-slate-700">
         <CardHeader>
-          <CardTitle className="text-green-400">Funding Roadmap</CardTitle>
+          <CardTitle className="text-base text-slate-300">RAG Workflow</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {data.funding_rounds.map((round, idx) => (
-              <div key={idx} className="p-4 bg-slate-900/50 rounded-lg border border-slate-700">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <FiDatabase className="w-5 h-5 text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-slate-300 mb-1">Retrieve</h4>
+                <p className="text-sm text-slate-400">{data.rag_workflow?.retrieve}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <FiCpu className="w-5 h-5 text-purple-400" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-slate-300 mb-1">Reason</h4>
+                <p className="text-sm text-slate-400">{data.rag_workflow?.reason}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <FiZap className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-slate-300 mb-1">Act</h4>
+                <p className="text-sm text-slate-400">{data.rag_workflow?.act}</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Explainability</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400">{data.explainability_approach}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Identity Memory</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400">{data.identity_memory_design}</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+function SecurityRenderer({ data }: { data: SecurityResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border-red-500/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-red-300">
+            <FiLock className="w-5 h-5" />
+            Security Architecture
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-slate-300">{data.security_architecture}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Compliance Roadmap</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {data.compliance_roadmap?.map((item, idx) => (
+              <div key={idx} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-semibold text-white text-lg">{round.round}</h4>
-                  <span className="text-green-400 text-xl font-bold">{round.amount}</span>
+                  <h4 className="font-semibold text-slate-200">{item.standard}</h4>
+                  <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">
+                    {item.timeline}
+                  </span>
                 </div>
-                <p className="text-xs text-gray-500 uppercase mb-2">Use of Funds:</p>
                 <ul className="space-y-1">
-                  {round.use_of_funds.map((use, uidx) => (
-                    <li key={uidx} className="text-gray-300 text-sm flex items-start gap-2">
-                      <DollarSign className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{use}</span>
+                  {item.key_controls?.map((control, cidx) => (
+                    <li key={cidx} className="flex items-start gap-2 text-sm">
+                      <FiCheckCircle className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-400">{control}</span>
                     </li>
                   ))}
                 </ul>
@@ -878,17 +1255,250 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Threat Model</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {data.threat_model?.map((item, idx) => (
+              <div key={idx} className="p-3 bg-red-500/5 border border-red-500/20 rounded-lg">
+                <div className="flex items-start gap-2 mb-2">
+                  <FiAlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                  <h4 className="font-semibold text-red-300">{item.threat}</h4>
+                </div>
+                <p className="text-sm text-slate-400 ml-6">{item.mitigation}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-4">
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-yellow-400">Key Metrics</CardTitle>
+            <CardTitle className="text-sm text-slate-300">Data Retention</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400">{data.data_retention_policy}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Privacy Techniques</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {data.key_metrics.map((metric, idx) => (
-                <li key={idx} className="text-gray-300 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-yellow-500" />
-                  {metric}
+              {data.privacy_techniques?.map((technique, idx) => (
+                <li key={idx} className="flex items-center gap-2 text-sm">
+                  <FiShield className="w-3 h-3 text-blue-400" />
+                  <span className="text-slate-400">{technique}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+function GTMRenderer({ data }: { data: GTMResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-indigo-300">
+            <FiTarget className="w-5 h-5" />
+            Ideal Customer Profiles
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3">
+            {data.icps?.map((icp, idx) => (
+              <div key={idx} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold text-slate-200">{icp.segment}</h4>
+                  <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">
+                    {icp.budget_range}
+                  </span>
+                </div>
+                <ul className="space-y-1">
+                  {icp.pain_points?.map((pain, pidx) => (
+                    <li key={pidx} className="flex items-start gap-2 text-sm">
+                      <FiAlertCircle className="w-3 h-3 text-orange-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-400">{pain}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Buyer Personas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3">
+            {data.buyer_personas?.map((persona, idx) => (
+              <div key={idx} className="p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <h4 className="font-semibold text-slate-200 mb-2">{persona.title}</h4>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="text-slate-500">Goals:</span>
+                    <p className="text-slate-400">{persona.goals}</p>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Objections:</span>
+                    <p className="text-slate-400">{persona.objections}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Pricing Tiers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 gap-4">
+            {data.pricing_tiers?.map((tier, idx) => (
+              <div key={idx} className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-slate-600/50 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold text-slate-200">{tier.tier}</h4>
+                  <span className="text-lg font-bold text-green-400">{tier.price}</span>
+                </div>
+                <ul className="space-y-1">
+                  {tier.features?.map((feature, fidx) => (
+                    <li key={fidx} className="flex items-start gap-2 text-sm">
+                      <FiCheckCircle className="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-400">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">0-to-1 Strategy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-400">{data.zero_to_one_strategy}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Channels</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {data.channels?.map((channel, idx) => (
+                <li key={idx} className="flex items-center gap-2 text-sm">
+                  <FiTrendingUp className="w-3 h-3 text-green-400" />
+                  <span className="text-slate-400">{channel}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+function InvestorRenderer({ data }: { data: InvestorResponse }) {
+  return (
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border-teal-500/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-teal-300">
+            <FiDollarSign className="w-5 h-5" />
+            Investor Narrative
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-slate-300 leading-relaxed">{data.investor_narrative}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Market Sizing</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <span className="text-xs text-blue-300">TAM</span>
+              <p className="text-2xl font-bold text-blue-200 mt-1">{data.tam_sam_som?.tam}</p>
+              <p className="text-xs text-slate-500 mt-1">Total Addressable Market</p>
+            </div>
+            <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+              <span className="text-xs text-purple-300">SAM</span>
+              <p className="text-2xl font-bold text-purple-200 mt-1">{data.tam_sam_som?.sam}</p>
+              <p className="text-xs text-slate-500 mt-1">Serviceable Available Market</p>
+            </div>
+            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <span className="text-xs text-green-300">SOM</span>
+              <p className="text-2xl font-bold text-green-200 mt-1">{data.tam_sam_som?.som}</p>
+              <p className="text-xs text-slate-500 mt-1">Serviceable Obtainable Market</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-base text-slate-300">Funding Rounds</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {data.funding_rounds?.map((round, idx) => (
+              <div key={idx} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-semibold text-slate-200">{round.round}</h4>
+                  <span className="text-xl font-bold text-green-400">{round.amount}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500">Use of Funds:</span>
+                  <ul className="space-y-1 mt-2">
+                    {round.use_of_funds?.map((use, uidx) => (
+                      <li key={uidx} className="flex items-start gap-2 text-sm">
+                        <FiCheckCircle className="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0" />
+                        <span className="text-slate-400">{use}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <Card className="bg-slate-800/50 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-sm text-slate-300">Key Metrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {data.key_metrics?.map((metric, idx) => (
+                <li key={idx} className="flex items-center gap-2 text-sm">
+                  <FiActivity className="w-3 h-3 text-green-400" />
+                  <span className="text-slate-400">{metric}</span>
                 </li>
               ))}
             </ul>
@@ -897,231 +1507,21 @@ export default function Home() {
 
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-orange-400">Pitch Deck Outline</CardTitle>
+            <CardTitle className="text-sm text-slate-300">Pitch Deck Outline</CardTitle>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-2">
-              {data.pitch_deck_outline.map((section, idx) => (
-                <li key={idx} className="text-gray-300 flex items-center gap-3">
-                  <span className="flex items-center justify-center w-6 h-6 bg-orange-900/50 text-orange-400 rounded-full text-sm font-semibold">
+            <ul className="space-y-2">
+              {data.pitch_deck_outline?.map((slide, idx) => (
+                <li key={idx} className="flex items-center gap-2 text-sm">
+                  <span className="w-5 h-5 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded text-xs font-semibold flex-shrink-0">
                     {idx + 1}
                   </span>
-                  {section}
+                  <span className="text-slate-400">{slide}</span>
                 </li>
               ))}
-            </ol>
+            </ul>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  )
-
-  const renderResponse = () => {
-    if (!response) return null
-
-    const agentName = AGENT_CONFIGS[activeTab].name
-
-    switch (agentName) {
-      case 'Founder/CEO':
-        return renderFounderCEOResponse(response as FounderCEOResponse)
-      case 'Product Architect':
-        return renderProductArchitectResponse(response as ProductArchitectResponse)
-      case 'AI/ML Research':
-        return renderAIMLResponse(response as AIMLResponse)
-      case 'RAG & Knowledge':
-        return renderRAGResponse(response as RAGResponse)
-      case 'Security & Compliance':
-        return renderSecurityResponse(response as SecurityResponse)
-      case 'GTM & Growth':
-        return renderGTMResponse(response as GTMResponse)
-      case 'Investor/Fundraising':
-        return renderInvestorResponse(response as InvestorResponse)
-      default:
-        return <pre className="text-gray-300 text-sm">{JSON.stringify(response, null, 2)}</pre>
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-lg sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                <Shield className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  VEMAR.AI
-                </h1>
-                <p className="text-gray-400 text-sm">Multi-Agent Venture Studio</p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Button
-                onClick={exportBlueprint}
-                variant="outline"
-                className="border-slate-700 hover:bg-slate-800"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export Blueprint
-              </Button>
-            </div>
-          </div>
-
-          {/* Agent Tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {AGENT_CONFIGS.map((agent, idx) => {
-              const Icon = agent.icon
-              return (
-                <button
-                  key={agent.id}
-                  onClick={() => handleTabChange(idx)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
-                    activeTab === idx
-                      ? `bg-gradient-to-r ${agent.color} text-white shadow-lg`
-                      : 'bg-slate-800/50 text-gray-400 hover:bg-slate-800'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{agent.name}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Active Agent Info */}
-        <Card className="bg-slate-900/50 border-slate-800 mb-6">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-4">
-                {(() => {
-                  const Icon = AGENT_CONFIGS[activeTab].icon
-                  return (
-                    <div className={`p-3 bg-gradient-to-br ${AGENT_CONFIGS[activeTab].color} rounded-xl`}>
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                  )
-                })()}
-                <div>
-                  <CardTitle className="text-white text-xl">{AGENT_CONFIGS[activeTab].name} Agent</CardTitle>
-                  <CardDescription className="text-gray-400">{AGENT_CONFIGS[activeTab].description}</CardDescription>
-                </div>
-              </div>
-              {response && (
-                <Button
-                  onClick={exportAsJSON}
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-700 hover:bg-slate-800"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Export JSON
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-400 mb-2 block">
-                  Query / Prompt
-                </label>
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Enter your query..."
-                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500"
-                />
-              </div>
-              <Button
-                onClick={handleConsultAgent}
-                disabled={loading || !query.trim()}
-                className={`w-full bg-gradient-to-r ${AGENT_CONFIGS[activeTab].color} hover:opacity-90`}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Consulting Agent...
-                  </>
-                ) : (
-                  <>
-                    <Brain className="w-4 h-4 mr-2" />
-                    Consult {AGENT_CONFIGS[activeTab].name} Agent
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Error Display */}
-        {error && (
-          <Card className="bg-red-900/20 border-red-500/30 mb-6">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="text-red-400 font-semibold mb-1">Error</h4>
-                  <p className="text-gray-300 text-sm">{error}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Response Display */}
-        {response && (
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 text-green-400">
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-medium">Response received from {AGENT_CONFIGS[activeTab].name} Agent</span>
-            </div>
-            {renderResponse()}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && !response && !error && (
-          <Card className="bg-slate-900/30 border-slate-800">
-            <CardContent className="pt-12 pb-12 text-center">
-              <div className={`inline-flex p-6 bg-gradient-to-br ${AGENT_CONFIGS[activeTab].color} rounded-2xl mb-4`}>
-                {(() => {
-                  const Icon = AGENT_CONFIGS[activeTab].icon
-                  return <Icon className="w-12 h-12 text-white" />
-                })()}
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Ready to consult {AGENT_CONFIGS[activeTab].name} Agent
-              </h3>
-              <p className="text-gray-400 max-w-md mx-auto">
-                Click the button above to get strategic insights for VEMAR.AI's {AGENT_CONFIGS[activeTab].description.toLowerCase()}.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="border-t border-slate-800 bg-slate-900/50 mt-12">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <div className="flex items-center gap-4">
-              <span>VEMAR.AI Multi-Agent Venture Studio</span>
-              <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-              <span>Powered by AI Agent Orchestration</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>System Online</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
