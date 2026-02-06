@@ -1,24 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable standalone output for optimized Docker deployments
-  output: 'standalone',
-
-  // Optimize for faster builds
-  swcMinify: true,
-
   // Reduce build time by skipping type checking (run separately)
   typescript: {
     ignoreBuildErrors: false,
   },
 
-  // Skip ESLint during builds (run separately)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   // Optimize images
   images: {
     unoptimized: true,
+  },
+
+  // Turbopack configuration
+  turbopack: {
+    root: '/app/nextjs-project',
   },
 
   // Enable experimental features for faster dev
@@ -36,18 +30,6 @@ const nextConfig = {
       'recharts',
       'date-fns',
     ],
-  },
-
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Faster rebuilds in development
-    if (dev) {
-      config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-      }
-    }
-    return config
   },
 }
 
