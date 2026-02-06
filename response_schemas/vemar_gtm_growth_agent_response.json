@@ -1,0 +1,262 @@
+{
+  "agent_name": "VEMAR GTM & Growth Agent",
+  "agent_id": "6985a2455eb49186d63e5dc9",
+  "agent_purpose": "Go-to-market strategy with ICPs, buyer personas, pricing tiers, and acquisition channels",
+  "description": "Defines ideal customer profiles, buyer personas, pricing strategies, and 0-to-1 acquisition plans for VEMAR.AI",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "icps": [
+        {
+          "segment": "string",
+          "pain_points": [
+            "string"
+          ],
+          "budget_range": "string"
+        }
+      ],
+      "buyer_personas": [
+        {
+          "title": "string",
+          "goals": "string",
+          "objections": "string"
+        }
+      ],
+      "pricing_tiers": [
+        {
+          "tier": "string",
+          "price": "string",
+          "features": [
+            "string"
+          ]
+        }
+      ],
+      "zero_to_one_strategy": "string",
+      "channels": [
+        "string"
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "icps": [
+        {
+          "segment": "Fintech fraud teams",
+          "pain_points": [
+            "Need for more accurate fraud detection",
+            "High false positive rates",
+            "Regulatory compliance"
+          ],
+          "budget_range": "Medium to High"
+        },
+        {
+          "segment": "Government ID agencies",
+          "pain_points": [
+            "Ensuring security of citizen data",
+            "Efficient identity verification",
+            "Compliance with data protection laws"
+          ],
+          "budget_range": "High"
+        },
+        {
+          "segment": "Media platforms",
+          "pain_points": [
+            "User account security",
+            "Preventing unauthorized content access",
+            "Managing user identity seamlessly"
+          ],
+          "budget_range": "Medium"
+        },
+        {
+          "segment": "Enterprise security teams",
+          "pain_points": [
+            "Data breach prevention",
+            "Integrating security with existing systems",
+            "Advanced threat detection"
+          ],
+          "budget_range": "High"
+        }
+      ],
+      "buyer_personas": [
+        {
+          "title": "Fraud Prevention Manager",
+          "goals": "Reduce fraud incidents, improve detection accuracy.",
+          "objections": "Concerns over integration complexity and cost."
+        },
+        {
+          "title": "Government IT Officer",
+          "goals": "Secure citizen data, comply with regulations.",
+          "objections": "Ensuring data sovereignty and compliance."
+        },
+        {
+          "title": "Chief Security Officer",
+          "goals": "Enhance overall security infrastructure.",
+          "objections": "Integration with existing security systems."
+        }
+      ],
+      "pricing_tiers": [
+        {
+          "tier": "API",
+          "price": "Pay-per-call",
+          "features": [
+            "Flexible API access",
+            "Usage-based pricing"
+          ]
+        },
+        {
+          "tier": "SaaS",
+          "price": "Per-seat",
+          "features": [
+            "User-friendly dashboard",
+            "Scalable seat-based pricing",
+            "Regular updates and support"
+          ]
+        },
+        {
+          "tier": "Enterprise",
+          "price": "Custom",
+          "features": [
+            "Tailored solutions",
+            "Dedicated support team",
+            "Integration with enterprise systems"
+          ]
+        },
+        {
+          "tier": "Government",
+          "price": "Compliance-heavy",
+          "features": [
+            "Security compliance",
+            "Data sovereignty",
+            "Custom solutions"
+          ]
+        }
+      ],
+      "zero_to_one_strategy": "Engage pilot customers in each ICP, develop case studies and proof-of-concept projects to validate solutions and build credibility.",
+      "channels": [
+        "Direct sales",
+        "Partnerships with KYC providers",
+        "Security integrations"
+      ]
+    },
+    "metadata": {
+      "agent_name": "VEMAR GTM & Growth Agent",
+      "timestamp": "2023-11-03T12:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T08:15:15.255876",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "icps": [
+        {
+          "segment": "Fintech fraud teams",
+          "pain_points": [
+            "Need for more accurate fraud detection",
+            "High false positive rates",
+            "Regulatory compliance"
+          ],
+          "budget_range": "Medium to High"
+        },
+        {
+          "segment": "Government ID agencies",
+          "pain_points": [
+            "Ensuring security of citizen data",
+            "Efficient identity verification",
+            "Compliance with data protection laws"
+          ],
+          "budget_range": "High"
+        },
+        {
+          "segment": "Media platforms",
+          "pain_points": [
+            "User account security",
+            "Preventing unauthorized content access",
+            "Managing user identity seamlessly"
+          ],
+          "budget_range": "Medium"
+        },
+        {
+          "segment": "Enterprise security teams",
+          "pain_points": [
+            "Data breach prevention",
+            "Integrating security with existing systems",
+            "Advanced threat detection"
+          ],
+          "budget_range": "High"
+        }
+      ],
+      "buyer_personas": [
+        {
+          "title": "Fraud Prevention Manager",
+          "goals": "Reduce fraud incidents, improve detection accuracy.",
+          "objections": "Concerns over integration complexity and cost."
+        },
+        {
+          "title": "Government IT Officer",
+          "goals": "Secure citizen data, comply with regulations.",
+          "objections": "Ensuring data sovereignty and compliance."
+        },
+        {
+          "title": "Chief Security Officer",
+          "goals": "Enhance overall security infrastructure.",
+          "objections": "Integration with existing security systems."
+        }
+      ],
+      "pricing_tiers": [
+        {
+          "tier": "API",
+          "price": "Pay-per-call",
+          "features": [
+            "Flexible API access",
+            "Usage-based pricing"
+          ]
+        },
+        {
+          "tier": "SaaS",
+          "price": "Per-seat",
+          "features": [
+            "User-friendly dashboard",
+            "Scalable seat-based pricing",
+            "Regular updates and support"
+          ]
+        },
+        {
+          "tier": "Enterprise",
+          "price": "Custom",
+          "features": [
+            "Tailored solutions",
+            "Dedicated support team",
+            "Integration with enterprise systems"
+          ]
+        },
+        {
+          "tier": "Government",
+          "price": "Compliance-heavy",
+          "features": [
+            "Security compliance",
+            "Data sovereignty",
+            "Custom solutions"
+          ]
+        }
+      ],
+      "zero_to_one_strategy": "Engage pilot customers in each ICP, develop case studies and proof-of-concept projects to validate solutions and build credibility.",
+      "channels": [
+        "Direct sales",
+        "Partnerships with KYC providers",
+        "Security integrations"
+      ]
+    },
+    "metadata": {
+      "agent_name": "VEMAR GTM & Growth Agent",
+      "timestamp": "2023-11-03T12:00:00Z"
+    }
+  },
+  "test_passed": true
+}

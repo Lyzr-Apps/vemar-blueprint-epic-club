@@ -1,0 +1,115 @@
+{
+  "agent_name": "VEMAR AI/ML Research Agent",
+  "agent_id": "6985a1fb301c62c7ca2c7daf",
+  "agent_purpose": "ML model architecture for deepfake detection, behavioral biometrics, and liveness detection",
+  "description": "Designs ML models with concrete architectures, training pipelines, and evaluation metrics for VEMAR.AI",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "deepfake_model": {
+        "architecture": "string",
+        "backbone": "string",
+        "training_data": "string"
+      },
+      "behavioral_biometrics_model": {
+        "architecture": "string",
+        "features": [
+          "string"
+        ]
+      },
+      "liveness_model": {
+        "architecture": "string",
+        "challenge_types": [
+          "string"
+        ]
+      },
+      "evaluation_metrics": [
+        "string"
+      ],
+      "latency_target": "string",
+      "accuracy_target": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "deepfake_model": {
+        "architecture": "CNN combined with Transformer",
+        "backbone": "EfficientNet",
+        "training_data": "FaceForensics++"
+      },
+      "behavioral_biometrics_model": {
+        "architecture": "RNN",
+        "features": [
+          "keystroke dynamics",
+          "mouse movements",
+          "touch gestures"
+        ]
+      },
+      "liveness_model": {
+        "architecture": "CNN",
+        "challenge_types": [
+          "eye tracking",
+          "micro-expressions",
+          "challenge-response"
+        ]
+      },
+      "evaluation_metrics": [
+        "AUC-ROC",
+        "precision/recall",
+        "false positive rate"
+      ],
+      "latency_target": "real-time (<100ms)",
+      "accuracy_target": "high accuracy (>= 95%)"
+    },
+    "metadata": {
+      "agent_name": "VEMAR AI/ML Research Agent",
+      "timestamp": "2023-11-24T03:37:44Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T08:14:39.891792",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "deepfake_model": {
+        "architecture": "CNN combined with Transformer",
+        "backbone": "EfficientNet",
+        "training_data": "FaceForensics++"
+      },
+      "behavioral_biometrics_model": {
+        "architecture": "RNN",
+        "features": [
+          "keystroke dynamics",
+          "mouse movements",
+          "touch gestures"
+        ]
+      },
+      "liveness_model": {
+        "architecture": "CNN",
+        "challenge_types": [
+          "eye tracking",
+          "micro-expressions",
+          "challenge-response"
+        ]
+      },
+      "evaluation_metrics": [
+        "AUC-ROC",
+        "precision/recall",
+        "false positive rate"
+      ],
+      "latency_target": "real-time (<100ms)",
+      "accuracy_target": "high accuracy (>= 95%)"
+    },
+    "metadata": {
+      "agent_name": "VEMAR AI/ML Research Agent",
+      "timestamp": "2023-11-24T03:37:44Z"
+    }
+  },
+  "test_passed": true
+}

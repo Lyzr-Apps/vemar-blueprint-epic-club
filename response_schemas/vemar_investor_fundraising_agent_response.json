@@ -1,0 +1,158 @@
+{
+  "agent_name": "VEMAR Investor & Fundraising Agent",
+  "agent_id": "6985a25f8ce1fc653cfdee55",
+  "agent_purpose": "Investor pitch narrative, TAM/SAM/SOM calculation, and fundraising strategy",
+  "description": "Crafts investor-ready narratives, market sizing, funding rounds strategy, and pitch deck outlines for VEMAR.AI",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "investor_narrative": "string",
+      "tam_sam_som": {
+        "tam": "string",
+        "sam": "string",
+        "som": "string"
+      },
+      "funding_rounds": [
+        {
+          "round": "string",
+          "amount": "string",
+          "use_of_funds": [
+            "string"
+          ]
+        }
+      ],
+      "key_metrics": [
+        "string"
+      ],
+      "pitch_deck_outline": [
+        "string"
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "investor_narrative": "In today's digital landscape, the deepfake epidemic poses a significant threat, undermining trust in digital content and facilitating sophisticated fraud. VEMAR.AI addresses this with its pioneering AI-native defense system, providing robust protection against deepfake and fraud-related threats. With traction gained through pilot customers, VEMAR.AI is poised to secure its position as an industry leader in cybersecurity.",
+      "tam_sam_som": {
+        "tam": "$30B+ in the digital identity market",
+        "sam": "$8B in deepfake detection and fraud prevention",
+        "som": "Realistic 3-year market capture"
+      },
+      "funding_rounds": [
+        {
+          "round": "Pre-seed",
+          "amount": "$500K",
+          "use_of_funds": [
+            "Develop MVP",
+            "Conduct initial market research",
+            "Secure first pilot customers"
+          ]
+        },
+        {
+          "round": "Seed",
+          "amount": "$3M",
+          "use_of_funds": [
+            "Expand development team",
+            "Enhance product features",
+            "Increase marketing and sales efforts"
+          ]
+        },
+        {
+          "round": "Series A",
+          "amount": "$15M",
+          "use_of_funds": [
+            "Scale operations",
+            "Expand into new markets",
+            "Strengthen customer support infrastructure"
+          ]
+        }
+      ],
+      "key_metrics": [
+        "Monthly Recurring Revenue (MRR) growth",
+        "Number of logo acquisitions",
+        "API volume increases",
+        "Net Revenue Retention (NRR)"
+      ],
+      "pitch_deck_outline": [
+        "Problem",
+        "Solution",
+        "Product",
+        "Market",
+        "Traction",
+        "Team",
+        "Ask"
+      ]
+    },
+    "metadata": {
+      "agent_name": "VEMAR Investor & Fundraising Agent",
+      "timestamp": "2023-11-03T12:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T08:15:27.681896",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "investor_narrative": "In today's digital landscape, the deepfake epidemic poses a significant threat, undermining trust in digital content and facilitating sophisticated fraud. VEMAR.AI addresses this with its pioneering AI-native defense system, providing robust protection against deepfake and fraud-related threats. With traction gained through pilot customers, VEMAR.AI is poised to secure its position as an industry leader in cybersecurity.",
+      "tam_sam_som": {
+        "tam": "$30B+ in the digital identity market",
+        "sam": "$8B in deepfake detection and fraud prevention",
+        "som": "Realistic 3-year market capture"
+      },
+      "funding_rounds": [
+        {
+          "round": "Pre-seed",
+          "amount": "$500K",
+          "use_of_funds": [
+            "Develop MVP",
+            "Conduct initial market research",
+            "Secure first pilot customers"
+          ]
+        },
+        {
+          "round": "Seed",
+          "amount": "$3M",
+          "use_of_funds": [
+            "Expand development team",
+            "Enhance product features",
+            "Increase marketing and sales efforts"
+          ]
+        },
+        {
+          "round": "Series A",
+          "amount": "$15M",
+          "use_of_funds": [
+            "Scale operations",
+            "Expand into new markets",
+            "Strengthen customer support infrastructure"
+          ]
+        }
+      ],
+      "key_metrics": [
+        "Monthly Recurring Revenue (MRR) growth",
+        "Number of logo acquisitions",
+        "API volume increases",
+        "Net Revenue Retention (NRR)"
+      ],
+      "pitch_deck_outline": [
+        "Problem",
+        "Solution",
+        "Product",
+        "Market",
+        "Traction",
+        "Team",
+        "Ask"
+      ]
+    },
+    "metadata": {
+      "agent_name": "VEMAR Investor & Fundraising Agent",
+      "timestamp": "2023-11-03T12:00:00Z"
+    }
+  },
+  "test_passed": true
+}

@@ -1,0 +1,81 @@
+{
+  "agent_name": "VEMAR Security & Compliance Agent",
+  "agent_id": "6985a22af7f7d3ffa5d8664c",
+  "test_message": "Create comprehensive security architecture and compliance roadmap covering GDPR, DPDP, SOC-2, ISO-27001, threat modeling, and data retention policies.",
+  "expected_purpose": "Security architecture and compliance",
+  "timestamp": "2026-02-06T08:15:01.834932",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "security_architecture": "Implement encryption at rest using AES-256 and TLS 1.3 for data in transit. Adopt a zero-trust architecture ensuring authentication and authorization at every layer. Use OAuth 2.0 and JWT for API authentication. Implement API rate limiting to prevent abuse and ensure availability.",
+      "compliance_roadmap": [
+        {
+          "standard": "GDPR",
+          "timeline": "Q2 2024",
+          "key_controls": [
+            "Data minimization",
+            "Explicit consent management",
+            "Right to be forgotten mechanism"
+          ]
+        },
+        {
+          "standard": "DPDP",
+          "timeline": "Q3 2024",
+          "key_controls": [
+            "Consent management",
+            "Data breach notification protocols"
+          ]
+        },
+        {
+          "standard": "SOC-2",
+          "timeline": "Q4 2024",
+          "key_controls": [
+            "Access control protocols",
+            "Change management procedures",
+            "Incident response plans"
+          ]
+        },
+        {
+          "standard": "ISO-27001",
+          "timeline": "Q1 2025",
+          "key_controls": [
+            "Information security management system",
+            "Risk management framework",
+            "Regular internal audits"
+          ]
+        }
+      ],
+      "threat_model": [
+        {
+          "threat": "Adversarial deepfakes",
+          "mitigation": "Implement AI-driven detection mechanisms and continuous model training to identify deepfakes."
+        },
+        {
+          "threat": "API abuse",
+          "mitigation": "Enforce strict rate limiting and authentication procedures, monitor for abnormal access patterns."
+        },
+        {
+          "threat": "Data poisoning",
+          "mitigation": "Use robust data validation protocols and anomaly detection systems to identify and isolate tainted data."
+        },
+        {
+          "threat": "Model extraction",
+          "mitigation": "Deploy differential privacy measures and monitor queries to detect and prevent model extraction attempts."
+        }
+      ],
+      "data_retention_policy": "Store biometric data and user videos for a maximum of 6 months unless further retention is explicitly consented by users. Keep fraud logs for up to 1 year for compliance and forensic purposes.",
+      "privacy_techniques": [
+        "Federated learning",
+        "Differential privacy",
+        "On-device processing"
+      ]
+    },
+    "metadata": {
+      "agent_name": "VEMAR Security & Compliance Agent",
+      "timestamp": "2023-11-23T08:02:50Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"security_architecture\": \"Implement encryption at rest using AES-256 and TLS 1.3 for data in transit. Adopt a zero-trust architecture ensuring authentication and authorization at every layer. Use OAuth 2.0 and JWT for API authentication. Implement API rate limiting to prevent abuse and ensure availability.\",\n    \"compliance_roadmap\": [\n      {\n        \"standard\": \"GDPR\",\n        \"timeline\": \"Q2 2024\",\n        \"key_controls\": [\"Data minimization\", \"Explicit consent management\", \"Right to be forgotten mechanism\"]\n      },\n      {\n        \"standard\": \"DPDP\",\n        \"timeline\": \"Q3 2024\",\n        \"key_controls\": [\"Consent management\", \"Data breach notification protocols\"]\n      },\n      {\n        \"standard\": \"SOC-2\",\n        \"timeline\": \"Q4 2024\",\n        \"key_controls\": [\"Access control protocols\", \"Change management procedures\", \"Incident response plans\"]\n      },\n      {\n        \"standard\": \"ISO-27001\",\n        \"timeline\": \"Q1 2025\",\n        \"key_controls\": [\"Information security management system\", \"Risk management framework\", \"Regular internal audits\"]\n      }\n    ],\n    \"threat_model\": [\n      {\n        \"threat\": \"Adversarial deepfakes\",\n        \"mitigation\": \"Implement AI-driven detection mechanisms and continuous model training to identify deepfakes.\"\n      },\n      {\n        \"threat\": \"API abuse\",\n        \"mitigation\": \"Enforce strict rate limiting and authentication procedures, monitor for abnormal access patterns.\"\n      },\n      {\n        \"threat\": \"Data poisoning\",\n        \"mitigation\": \"Use robust data validation protocols and anomaly detection systems to identify and isolate tainted data.\"\n      },\n      {\n        \"threat\": \"Model extraction\",\n        \"mitigation\": \"Deploy differential privacy measures and monitor queries to detect and prevent model extraction attempts.\"\n      }\n    ],\n    \"data_retention_policy\": \"Store biometric data and user videos for a maximum of 6 months unless further retention is explicitly consented by users. Keep fraud logs for up to 1 year for compliance and forensic purposes.\",\n    \"privacy_techniques\": [\n      \"Federated learning\",\n      \"Differential privacy\",\n      \"On-device processing\"\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"VEMAR Security & Compliance Agent\",\n    \"timestamp\": \"2023-11-23T08:02:50Z\"\n  }\n}"
+}

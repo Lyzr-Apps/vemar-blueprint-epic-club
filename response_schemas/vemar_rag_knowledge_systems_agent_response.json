@@ -1,0 +1,130 @@
+{
+  "agent_name": "VEMAR RAG & Knowledge Systems Agent",
+  "agent_id": "6985a21376d4fd436bf4b7c1",
+  "agent_purpose": "RAG and vector database design for fraud pattern memory and identity graphs",
+  "description": "Designs vector database schema, knowledge sources, RAG workflows, and identity memory systems for VEMAR.AI",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "vector_db_schema": {
+        "collections": [
+          {
+            "name": "string",
+            "embedding_type": "string",
+            "dimensions": "number"
+          }
+        ]
+      },
+      "knowledge_sources": [
+        "string"
+      ],
+      "rag_workflow": {
+        "retrieve": "string",
+        "reason": "string",
+        "act": "string"
+      },
+      "explainability_approach": "string",
+      "identity_memory_design": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "vector_db_schema": {
+        "collections": [
+          {
+            "name": "user_behavior_patterns",
+            "embedding_type": "dense",
+            "dimensions": 128
+          },
+          {
+            "name": "fraud_signatures",
+            "embedding_type": "dense",
+            "dimensions": 256
+          },
+          {
+            "name": "threat_intel",
+            "embedding_type": "dense",
+            "dimensions": 128
+          },
+          {
+            "name": "media_fingerprints",
+            "embedding_type": "sparse",
+            "dimensions": 512
+          }
+        ]
+      },
+      "knowledge_sources": [
+        "fraud_logs",
+        "deepfake_datasets",
+        "user_interaction_history",
+        "external_threat_feeds"
+      ],
+      "rag_workflow": {
+        "retrieve": "Access vector database to match current input against stored embeddings in user_behavior_patterns and fraud_signatures collections.",
+        "reason": "Analyze the retrieved patterns to evaluate similarities and possible fraud correlations.",
+        "act": "Flag suspicious activities, request additional verification from the user, or challenge the transaction."
+      },
+      "explainability_approach": "Provide a detailed report on which patterns matched and why they triggered a flag, including similarity scores and historical comparisons.",
+      "identity_memory_design": "Maintain a repository of historical verification results, establish behavioral baselines, and calculate trust scores based on user interactions over time."
+    },
+    "metadata": {
+      "agent_name": "VEMAR RAG & Knowledge Systems Agent",
+      "timestamp": "2023-11-23T10:06:35Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T08:14:50.317826",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "vector_db_schema": {
+        "collections": [
+          {
+            "name": "user_behavior_patterns",
+            "embedding_type": "dense",
+            "dimensions": 128
+          },
+          {
+            "name": "fraud_signatures",
+            "embedding_type": "dense",
+            "dimensions": 256
+          },
+          {
+            "name": "threat_intel",
+            "embedding_type": "dense",
+            "dimensions": 128
+          },
+          {
+            "name": "media_fingerprints",
+            "embedding_type": "sparse",
+            "dimensions": 512
+          }
+        ]
+      },
+      "knowledge_sources": [
+        "fraud_logs",
+        "deepfake_datasets",
+        "user_interaction_history",
+        "external_threat_feeds"
+      ],
+      "rag_workflow": {
+        "retrieve": "Access vector database to match current input against stored embeddings in user_behavior_patterns and fraud_signatures collections.",
+        "reason": "Analyze the retrieved patterns to evaluate similarities and possible fraud correlations.",
+        "act": "Flag suspicious activities, request additional verification from the user, or challenge the transaction."
+      },
+      "explainability_approach": "Provide a detailed report on which patterns matched and why they triggered a flag, including similarity scores and historical comparisons.",
+      "identity_memory_design": "Maintain a repository of historical verification results, establish behavioral baselines, and calculate trust scores based on user interactions over time."
+    },
+    "metadata": {
+      "agent_name": "VEMAR RAG & Knowledge Systems Agent",
+      "timestamp": "2023-11-23T10:06:35Z"
+    }
+  },
+  "test_passed": true
+}

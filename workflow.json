@@ -1,0 +1,125 @@
+{
+  "workflow_name": "VEMAR.AI Multi-Agent RAG Venture Studio",
+  "description": "Complete AI-powered venture studio for VEMAR.AI - Digital Clone Defense & Identity Protection startup",
+  "nodes": [
+    {
+      "id": "input_node",
+      "type": "Input",
+      "label": "User Query",
+      "nodeCategory": "input"
+    },
+    {
+      "id": "founder_ceo_agent",
+      "type": "Agent",
+      "label": "VEMAR Founder & CEO Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a1bbb37fff3a03c07c44"
+    },
+    {
+      "id": "product_architect_agent",
+      "type": "Agent",
+      "label": "VEMAR Product Architect Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a1d176d4fd436bf4b7bd"
+    },
+    {
+      "id": "aiml_research_agent",
+      "type": "Agent",
+      "label": "VEMAR AI/ML Research Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a1fb301c62c7ca2c7daf"
+    },
+    {
+      "id": "rag_knowledge_agent",
+      "type": "Agent",
+      "label": "VEMAR RAG & Knowledge Systems Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a21376d4fd436bf4b7c1"
+    },
+    {
+      "id": "security_compliance_agent",
+      "type": "Agent",
+      "label": "VEMAR Security & Compliance Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a22af7f7d3ffa5d8664c"
+    },
+    {
+      "id": "gtm_growth_agent",
+      "type": "Agent",
+      "label": "VEMAR GTM & Growth Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a2455eb49186d63e5dc9"
+    },
+    {
+      "id": "investor_fundraising_agent",
+      "type": "Agent",
+      "label": "VEMAR Investor & Fundraising Agent",
+      "nodeCategory": "agent",
+      "agent_id": "6985a25f8ce1fc653cfdee55"
+    },
+    {
+      "id": "output_node",
+      "type": "Output",
+      "label": "VEMAR.AI Blueprint",
+      "nodeCategory": "end"
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "founder_ceo_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "product_architect_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "aiml_research_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "rag_knowledge_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "security_compliance_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "gtm_growth_agent"
+    },
+    {
+      "source": "input_node",
+      "target": "investor_fundraising_agent"
+    },
+    {
+      "source": "founder_ceo_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "product_architect_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "aiml_research_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "rag_knowledge_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "security_compliance_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "gtm_growth_agent",
+      "target": "output_node"
+    },
+    {
+      "source": "investor_fundraising_agent",
+      "target": "output_node"
+    }
+  ]
+}
