@@ -383,12 +383,12 @@ export default function VemarAIStudio() {
     setGuardrailWarning(null)
 
     try {
-      const result = await callAIAgent(agent.id, queryToSend)
+      const result = await callAIAgent(queryToSend, agent.id)
 
-      if (result.status === 'success') {
-        setResponse(result.result)
+      if (result.success && result.response.status === 'success') {
+        setResponse(result.response.result)
       } else {
-        setError('Agent returned an error. Please try again.')
+        setError(result.error || 'Agent returned an error. Please try again.')
       }
     } catch (err) {
       setError('Failed to connect to agent. Please check your connection.')
@@ -468,12 +468,12 @@ export default function VemarAIStudio() {
     setGuardrailWarning(null)
 
     try {
-      const result = await callAIAgent(agent.id, action.query)
+      const result = await callAIAgent(action.query, agent.id)
 
-      if (result.status === 'success') {
-        setResponse(result.result)
+      if (result.success && result.response.status === 'success') {
+        setResponse(result.response.result)
       } else {
-        setError('Agent returned an error. Please try again.')
+        setError(result.error || 'Agent returned an error. Please try again.')
       }
     } catch (err) {
       setError('Failed to connect to agent. Please check your connection.')
