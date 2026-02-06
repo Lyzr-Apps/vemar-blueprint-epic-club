@@ -680,6 +680,11 @@ export default function VemarAIStudio() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+      {/* Deepfake Detection Themed Background */}
+      <div className="deepfake-bg">
+        <div className="neural-pattern"></div>
+        <div className="security-grid"></div>
+      </div>
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
