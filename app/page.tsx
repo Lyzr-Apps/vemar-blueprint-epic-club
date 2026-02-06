@@ -376,6 +376,51 @@ export default function VemarAIStudio() {
     linkElement.click()
   }
 
+  const handleQuickAction = async (actionType: 'pitch-deck' | 'tech-stack' | 'roadmap' | 'business-plan') => {
+    const actionMap = {
+      'pitch-deck': {
+        agentIndex: 6, // Investor & Fundraising
+        query: 'Create a comprehensive pitch deck outline with slide-by-slide breakdown for VEMAR.AI including problem, solution, market size, business model, traction, team, and ask.'
+      },
+      'tech-stack': {
+        agentIndex: 1, // Product Architect
+        query: 'Detail the complete technical stack for VEMAR.AI including frontend, backend, ML infrastructure, database, deployment, and DevOps tools with justification for each choice.'
+      },
+      'roadmap': {
+        agentIndex: 1, // Product Architect
+        query: 'Create a detailed product roadmap for VEMAR.AI with MVP, V1, and V2 milestones, timeline estimates, and key deliverables for each phase.'
+      },
+      'business-plan': {
+        agentIndex: 0, // Founder & CEO
+        query: 'Develop a comprehensive business plan for VEMAR.AI covering executive summary, market analysis, competitive positioning, business model, revenue strategy, and growth projections.'
+      }
+    }
+
+    const action = actionMap[actionType]
+    setActiveAgent(action.agentIndex)
+    setQuery(action.query)
+
+    // Auto-trigger the agent consultation
+    const agent = agents[action.agentIndex]
+    setLoading(true)
+    setError(null)
+    setResponse(null)
+
+    try {
+      const result = await callAIAgent(agent.id, action.query)
+
+      if (result.status === 'success') {
+        setResponse(result.result)
+      } else {
+        setError('Agent returned an error. Please try again.')
+      }
+    } catch (err) {
+      setError('Failed to connect to agent. Please check your connection.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const renderResponse = (data: any, agentIndex: number) => {
     if (!data) return null
 
@@ -668,19 +713,35 @@ export default function VemarAIStudio() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-3">
-                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                <button
+                  onClick={() => handleQuickAction('pitch-deck')}
+                  disabled={loading}
+                  className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <FiFileText className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
                   <span className="text-sm">Pitch Deck</span>
                 </button>
-                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                <button
+                  onClick={() => handleQuickAction('tech-stack')}
+                  disabled={loading}
+                  className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <FiLayers className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
                   <span className="text-sm">Tech Stack</span>
                 </button>
-                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                <button
+                  onClick={() => handleQuickAction('roadmap')}
+                  disabled={loading}
+                  className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <FiTrendingUp className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
                   <span className="text-sm">Roadmap</span>
                 </button>
-                <button className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group">
+                <button
+                  onClick={() => handleQuickAction('business-plan')}
+                  disabled={loading}
+                  className="flex items-center gap-2 p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-lg border border-slate-600/50 hover:border-slate-500 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <FiBriefcase className="w-5 h-5 text-orange-400 group-hover:scale-110 transition-transform" />
                   <span className="text-sm">Business Plan</span>
                 </button>
