@@ -11,7 +11,8 @@ import {
   FiDollarSign, FiDownload, FiFileText, FiCheckCircle,
   FiAlertCircle, FiLoader, FiZap, FiBriefcase, FiTarget,
   FiGrid, FiLayers, FiActivity, FiStar, FiTrendingDown,
-  FiMoon, FiSun, FiMonitor, FiSend, FiRefreshCw, FiMaximize2
+  FiMoon, FiSun, FiMonitor, FiSend, FiRefreshCw, FiMaximize2,
+  FiCreditCard, FiExternalLink
 } from 'react-icons/fi'
 import {
   SiOpenai, SiPython, SiTypescript, SiReact, SiDocker, SiKubernetes
@@ -463,6 +464,15 @@ export default function VemarAIStudio() {
                   <FiMonitor className="w-4 h-4" />
                 </button>
               </div>
+
+              <Button
+                onClick={() => window.open('https://pay.lyzr.ai', '_blank')}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0"
+              >
+                <FiCreditCard className="w-4 h-4 mr-2" />
+                Payment Gateway
+                <FiExternalLink className="w-3 h-3 ml-2" />
+              </Button>
 
               <Button
                 onClick={handleExportBlueprint}
