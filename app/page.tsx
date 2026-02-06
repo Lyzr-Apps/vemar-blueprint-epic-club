@@ -288,6 +288,7 @@ export default function VemarAIStudio() {
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState<string>('')
+  const [paymentCurrency, setPaymentCurrency] = useState<string>('USD')
   const [paymentDescription, setPaymentDescription] = useState<string>('')
   const [paymentMetadata, setPaymentMetadata] = useState<string>('')
   const [paymentLoading, setPaymentLoading] = useState(false)
@@ -481,9 +482,10 @@ export default function VemarAIStudio() {
 
       const result = await createPaymentSession(
         amount,
-        paymentDescription || `Payment of $${amount}`,
+        paymentDescription || `Payment of ${paymentCurrency} ${amount}`,
         Object.keys(metadata).length > 0 ? metadata : undefined,
-        demoMode
+        demoMode,
+        paymentCurrency
       )
 
       if (result.success) {
@@ -494,7 +496,7 @@ export default function VemarAIStudio() {
         const newTransaction = {
           id: `txn-${Date.now()}`,
           amount,
-          description: paymentDescription || `Payment of $${amount}`,
+          description: paymentDescription || `Payment of ${paymentCurrency} ${amount}`,
           status: 'success' as const,
           timestamp: new Date().toISOString()
         }
@@ -508,6 +510,7 @@ export default function VemarAIStudio() {
         // Reset form after delay
         setTimeout(() => {
           setPaymentAmount('')
+          setPaymentCurrency('USD')
           setPaymentDescription('')
           setPaymentMetadata('')
         }, 2000)
@@ -519,7 +522,7 @@ export default function VemarAIStudio() {
         const newTransaction = {
           id: `txn-${Date.now()}`,
           amount,
-          description: paymentDescription || `Payment of $${amount}`,
+          description: paymentDescription || `Payment of ${paymentCurrency} ${amount}`,
           status: 'error' as const,
           timestamp: new Date().toISOString()
         }
@@ -1617,25 +1620,51 @@ export default function VemarAIStudio() {
             <div className="p-6 space-y-6">
               {/* Payment Form */}
               <div className="space-y-4">
-                {/* Amount Input */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Amount (USD)
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiDollarSign className="w-5 h-5 text-slate-400" />
+                {/* Amount & Currency Input */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Amount
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <FiDollarSign className="w-5 h-5 text-slate-400" />
+                      </div>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={paymentAmount}
+                        onChange={(e) => setPaymentAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="pl-10 bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-green-500 focus:ring-green-500/20"
+                        disabled={paymentLoading}
+                      />
                     </div>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={paymentAmount}
-                      onChange={(e) => setPaymentAmount(e.target.value)}
-                      placeholder="0.00"
-                      className="pl-10 bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-green-500 focus:ring-green-500/20"
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Currency
+                    </label>
+                    <select
+                      value={paymentCurrency}
+                      onChange={(e) => setPaymentCurrency(e.target.value)}
+                      className="w-full h-10 px-3 bg-slate-800 border border-slate-700 text-slate-100 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500/20 outline-none"
                       disabled={paymentLoading}
-                    />
+                    >
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                      <option value="INR">INR</option>
+                      <option value="JPY">JPY</option>
+                      <option value="AUD">AUD</option>
+                      <option value="CAD">CAD</option>
+                      <option value="CHF">CHF</option>
+                      <option value="CNY">CNY</option>
+                      <option value="SGD">SGD</option>
+                      <option value="AED">AED</option>
+                      <option value="BRL">BRL</option>
+                    </select>
                   </div>
                 </div>
 

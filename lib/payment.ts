@@ -13,6 +13,8 @@ export interface PaymentResponse {
   message?: string
   error?: string
   timestamp?: string
+  session_id?: string
+  currency?: string
 }
 
 /**
@@ -45,7 +47,8 @@ export async function createPaymentSession(
   amount?: number,
   description?: string,
   metadata?: Record<string, any>,
-  demoMode?: boolean
+  demoMode?: boolean,
+  currency?: string
 ): Promise<PaymentResponse> {
   try {
     const response = await fetch('/api/payment', {
@@ -58,6 +61,7 @@ export async function createPaymentSession(
         description,
         metadata,
         demo_mode: demoMode,
+        currency: currency || 'USD',
       }),
     })
 

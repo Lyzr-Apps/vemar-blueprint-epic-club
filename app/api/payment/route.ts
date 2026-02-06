@@ -12,7 +12,7 @@ function generateSessionId(): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { amount, description, user_id, session_id, metadata, demo_mode } = body
+    const { amount, description, user_id, session_id, metadata, demo_mode, currency } = body
 
     if (!LYZR_API_KEY) {
       return NextResponse.json(
@@ -28,10 +28,12 @@ export async function POST(request: NextRequest) {
     // Demo mode - simulate payment session creation
     if (demo_mode === true) {
       const demoSessionId = generateSessionId()
+      const demoCurrency = currency || 'USD'
       return NextResponse.json({
         success: true,
-        payment_url: `${LYZR_PAYMENT_URL}?session=${demoSessionId}&demo=true`,
+        payment_url: `${LYZR_PAYMENT_URL}?session=${demoSessionId}&demo=true&currency=${demoCurrency}`,
         session_id: demoSessionId,
+        currency: demoCurrency,
         message: 'Demo payment session created successfully',
         timestamp: new Date().toISOString(),
         demo: true,
@@ -40,9 +42,10 @@ export async function POST(request: NextRequest) {
 
     // Production mode - create actual payment session
     try {
+      const paymentCurrency = currency || 'USD'
       const paymentPayload = {
         amount: amount || 0,
-        currency: 'USD',
+        currency: paymentCurrency,
         description: description || 'Payment for VEMAR.AI services',
         user_id: user_id || `user-${generateSessionId()}`,
         session_id: session_id || generateSessionId(),
@@ -66,6 +69,7 @@ export async function POST(request: NextRequest) {
           success: true,
           payment_url: paymentData.payment_url || `${LYZR_PAYMENT_URL}?session=${paymentPayload.session_id}`,
           session_id: paymentPayload.session_id,
+          currency: paymentCurrency,
           message: 'Payment session created successfully',
           timestamp: new Date().toISOString(),
           payment_data: paymentData,
@@ -75,8 +79,9 @@ export async function POST(request: NextRequest) {
         const fallbackSessionId = generateSessionId()
         return NextResponse.json({
           success: true,
-          payment_url: `${LYZR_PAYMENT_URL}?session=${fallbackSessionId}&amount=${amount}`,
+          payment_url: `${LYZR_PAYMENT_URL}?session=${fallbackSessionId}&amount=${amount}&currency=${paymentCurrency}`,
           session_id: fallbackSessionId,
+          currency: paymentCurrency,
           message: 'Payment URL generated (fallback mode)',
           timestamp: new Date().toISOString(),
           fallback: true,
@@ -85,10 +90,12 @@ export async function POST(request: NextRequest) {
     } catch (apiError) {
       // Fallback on API error
       const fallbackSessionId = generateSessionId()
+      const fallbackCurrency = currency || 'USD'
       return NextResponse.json({
         success: true,
-        payment_url: `${LYZR_PAYMENT_URL}?session=${fallbackSessionId}&amount=${amount}`,
+        payment_url: `${LYZR_PAYMENT_URL}?session=${fallbackSessionId}&amount=${amount}&currency=${fallbackCurrency}`,
         session_id: fallbackSessionId,
+        currency: fallbackCurrency,
         message: 'Payment URL generated (fallback mode)',
         timestamp: new Date().toISOString(),
         fallback: true,
