@@ -40,45 +40,37 @@ interface AgentStats {
 }
 
 // Agent routing configuration
-const AGENT_CONFIG: Record<RequestCategory, { name: string; icon: string; description: string }> = {
+const AGENT_CONFIG: Record<RequestCategory, { name: string; description: string }> = {
   SUPPORT: {
     name: 'Support Agent',
-    icon: '🛟',
     description: 'Handles customer support and general inquiries'
   },
   TECHNICAL: {
     name: 'Technical Agent',
-    icon: '⚙️',
     description: 'Resolves technical issues and bug reports'
   },
   CREATIVE: {
     name: 'Creative Agent',
-    icon: '🎨',
     description: 'Manages design and creative requests'
   },
   CONSULTING: {
     name: 'Consulting Agent',
-    icon: '💼',
     description: 'Provides business consulting and strategy'
   },
   CONTENT: {
     name: 'Content Agent',
-    icon: '✍️',
     description: 'Creates and manages content requests'
   },
   MARKETING: {
     name: 'Marketing Agent',
-    icon: '📈',
     description: 'Handles marketing campaigns and promotions'
   },
   ANALYTICS: {
     name: 'Analytics Agent',
-    icon: '📊',
     description: 'Analyzes data and generates reports'
   },
   GENERAL: {
     name: 'General Agent',
-    icon: '🤖',
     description: 'Handles miscellaneous requests'
   }
 }
@@ -456,7 +448,7 @@ export default function ClientRequestManager() {
                         <SelectContent>
                           {Object.entries(AGENT_CONFIG).map(([key, config]) => (
                             <SelectItem key={key} value={key}>
-                              {config.icon} {config.name}
+                              {config.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
