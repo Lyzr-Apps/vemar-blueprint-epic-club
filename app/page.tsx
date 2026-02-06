@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
 import { getPaymentUrl, createPaymentSession } from '@/lib/payment'
+import { detectDeepfake } from '@/lib/deepfake'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -282,6 +283,7 @@ export default function VemarAIStudio() {
   const [isScanning, setIsScanning] = useState(false)
   const [guardrailWarning, setGuardrailWarning] = useState<string | null>(null)
   const [isInvestorMode, setIsInvestorMode] = useState(true)
+  const [demoMode, setDemoMode] = useState(false)
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false)
@@ -480,7 +482,8 @@ export default function VemarAIStudio() {
       const result = await createPaymentSession(
         amount,
         paymentDescription || `Payment of $${amount}`,
-        Object.keys(metadata).length > 0 ? metadata : undefined
+        Object.keys(metadata).length > 0 ? metadata : undefined,
+        demoMode
       )
 
       if (result.success) {
@@ -611,60 +614,39 @@ export default function VemarAIStudio() {
     setError(null)
     setIsScanning(true)
 
-    // Simulate upload progress
+    // Simulate upload progress with visual feedback
     const progressInterval = setInterval(() => {
       setUploadProgress(prev => {
-        if (prev >= 100) {
+        if (prev >= 90) {
           clearInterval(progressInterval)
-          return 100
+          return 90
         }
         return prev + 10
       })
     }, 200)
 
-    // Simulate AI analysis
-    setTimeout(() => {
+    try {
+      // Call actual deepfake detection API
+      const result = await detectDeepfake(file, demoMode)
+
       clearInterval(progressInterval)
       setUploadProgress(100)
 
-      // Simulate deepfake detection result
-      const mockResults = [
-        {
-          status: 'authentic' as const,
-          confidence: 98.5,
-          details: [
-            'No digital manipulation signatures detected',
-            'Facial consistency analysis passed',
-            'Temporal coherence verified',
-            'Natural lighting patterns confirmed'
-          ]
-        },
-        {
-          status: 'manipulated' as const,
-          confidence: 94.2,
-          details: [
-            'Deepfake artifacts detected in facial region',
-            'Inconsistent eye blinking patterns',
-            'Audio-visual synchronization anomalies',
-            'GAN-based manipulation signatures found'
-          ]
-        },
-        {
-          status: 'suspicious' as const,
-          confidence: 72.8,
-          details: [
-            'Minor inconsistencies in lighting',
-            'Compression artifacts detected',
-            'Partial facial occlusion complicates analysis',
-            'Requires manual review'
-          ]
-        }
-      ]
-
-      const result = mockResults[Math.floor(Math.random() * mockResults.length)]
-      setScanResult(result)
+      if (result.success && result.result) {
+        setScanResult({
+          status: result.result.status,
+          confidence: result.result.confidence,
+          details: result.result.details
+        })
+      } else {
+        setError(result.error || 'Failed to analyze file')
+      }
+    } catch (err) {
+      clearInterval(progressInterval)
+      setError('Failed to connect to deepfake detection service')
+    } finally {
       setIsScanning(false)
-    }, 3000)
+    }
   }
 
   const renderResponse = (data: any, agentIndex: number) => {
@@ -736,6 +718,20 @@ export default function VemarAIStudio() {
                   </>
                 )}
               </div>
+
+              {/* Demo Mode Toggle */}
+              <button
+                onClick={() => setDemoMode(!demoMode)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
+                  demoMode
+                    ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
+                    : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-800 hover:border-slate-600'
+                }`}
+                title={demoMode ? 'Demo mode enabled' : 'Demo mode disabled'}
+              >
+                <FiZap className={`w-3 h-3 ${demoMode ? 'animate-pulse' : ''}`} />
+                <span className="text-xs font-medium">{demoMode ? 'Demo' : 'Live'}</span>
+              </button>
 
               {/* Theme switcher */}
               <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-1">
@@ -1594,8 +1590,18 @@ export default function VemarAIStudio() {
                   <FiCreditCard className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-100">Payment Gateway</h3>
-                  <p className="text-sm text-slate-400">Create a new payment session</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-100">Payment Gateway</h3>
+                    {demoMode && (
+                      <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-500/20 border border-blue-500/40 rounded text-xs text-blue-300 font-medium">
+                        <FiZap className="w-3 h-3 animate-pulse" />
+                        Demo Mode
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    {demoMode ? 'Testing mode - no real charges' : 'Create a new payment session'}
+                  </p>
                 </div>
               </div>
               <button

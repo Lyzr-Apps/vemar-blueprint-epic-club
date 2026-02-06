@@ -44,7 +44,8 @@ export async function getPaymentUrl(): Promise<PaymentResponse> {
 export async function createPaymentSession(
   amount?: number,
   description?: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
+  demoMode?: boolean
 ): Promise<PaymentResponse> {
   try {
     const response = await fetch('/api/payment', {
@@ -56,6 +57,7 @@ export async function createPaymentSession(
         amount,
         description,
         metadata,
+        demo_mode: demoMode,
       }),
     })
 
