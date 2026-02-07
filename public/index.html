@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEMAR.AI - AI-Powered Development Platform</title>
+    <title>Lovable - Your Superhuman Full Stack Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -108,12 +108,13 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-16">
                             <div className="flex items-center space-x-2">
-                                <img src="https://asset.lyzr.app/ktn7GSZS" alt="VEMAR.AI Logo" className="w-12 h-12 rounded-full object-cover" />
-                                <span className="text-2xl font-bold gradient-text">VEMAR.AI</span>
+                                <img src="https://lovable.dev/favicon.ico" alt="Lovable Logo" className="w-12 h-12 object-contain" />
+                                <span className="text-2xl font-bold gradient-text">Lovable</span>
                             </div>
 
                             <div className="hidden md:flex items-center space-x-8">
                                 <a href="#features" className="text-gray-700 hover:text-purple-600 transition-colors">Features</a>
+                                <a href="#deepfake-demo" className="text-gray-700 hover:text-purple-600 transition-colors">Demo</a>
                                 <a href="#solutions" className="text-gray-700 hover:text-purple-600 transition-colors">Solutions</a>
                                 <a href="#pricing" className="text-gray-700 hover:text-purple-600 transition-colors">Pricing</a>
                                 <a href="#community" className="text-gray-700 hover:text-purple-600 transition-colors">Community</a>
@@ -184,11 +185,11 @@
                         </h1>
 
                         <p className="text-xl md:text-2xl text-gray-600 mb-8">
-                            Your superhuman full stack AI engineer
+                            Your superhuman full stack engineer
                         </p>
 
                         <p className="text-lg text-gray-500 mb-12">
-                            Chat with AI to build web apps. Sync with GitHub. One-click deploy.
+                            Build software products, using only a chat interface. Sync with GitHub. One-click deploy.
                         </p>
 
                         <div className="max-w-3xl mx-auto mb-8">
@@ -222,37 +223,37 @@
                 {
                     icon: 'fa-comments',
                     title: 'AI-Powered Chat Interface',
-                    description: 'Chat naturally with AI to build, edit, and refine your applications in real-time.',
+                    description: 'Chat naturally with AI to build, edit, and refine your applications. Voice input and screenshot support included.',
                     color: 'text-blue-600'
                 },
                 {
                     icon: 'fa-code-branch',
                     title: 'GitHub Integration',
-                    description: 'Two-way sync with your repositories. Switch branches and manage code seamlessly.',
+                    description: 'Two-way sync with your repositories. Switch branches and manage code seamlessly in real-time.',
                     color: 'text-green-600'
                 },
                 {
                     icon: 'fa-database',
                     title: 'Supabase Backend',
-                    description: 'Built-in user authentication, data storage, and edge functions deployment.',
+                    description: 'Built-in user authentication, data storage, and edge functions. Deploy backend instantly.',
                     color: 'text-purple-600'
                 },
                 {
                     icon: 'fa-rocket',
                     title: 'One-Click Deploy',
-                    description: 'Deploy your applications instantly with custom domains and analytics integration.',
+                    description: 'Deploy your applications instantly with custom domains (Pro) and built-in analytics tracking.',
                     color: 'text-orange-600'
                 },
                 {
                     icon: 'fa-users',
-                    title: 'Team Collaboration',
-                    description: 'Work together with role-based access control and workspace management.',
+                    title: 'Workspace Collaboration',
+                    description: 'Work together with role-based access control. Share projects and collaborate in real-time.',
                     color: 'text-pink-600'
                 },
                 {
-                    icon: 'fa-puzzle-piece',
-                    title: 'MCP Integration',
-                    description: 'Connect custom tools and remote servers with Model Context Protocol support.',
+                    icon: 'fa-plug',
+                    title: 'MCP Server Support',
+                    description: 'Connect custom tools and remote servers with Model Context Protocol for extended capabilities.',
                     color: 'text-indigo-600'
                 }
             ];
@@ -273,6 +274,250 @@
                                     <i className={`fas ${feature.icon} text-4xl ${feature.color} mb-4`}></i>
                                     <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
                                     <p className="text-gray-600">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Deepfake Detection Demo Component
+        function DeepfakeDetectionDemo() {
+            const [isScanning, setIsScanning] = useState(false);
+            const [selectedMedia, setSelectedMedia] = useState(null);
+            const [result, setResult] = useState(null);
+            const [progress, setProgress] = useState(0);
+
+            const handleFileSelect = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        setSelectedMedia(e.target.result);
+                        setResult(null);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleScan = () => {
+                if (!selectedMedia) return;
+
+                setIsScanning(true);
+                setProgress(0);
+                setResult(null);
+
+                // Simulate scanning progress
+                const interval = setInterval(() => {
+                    setProgress(prev => {
+                        if (prev >= 100) {
+                            clearInterval(interval);
+                            setIsScanning(false);
+                            // Simulate detection result
+                            const isReal = Math.random() > 0.5;
+                            const confidence = (Math.random() * 30 + 70).toFixed(2);
+                            setResult({
+                                isReal,
+                                confidence,
+                                indicators: isReal ? [
+                                    'Natural facial expressions detected',
+                                    'Consistent lighting patterns',
+                                    'No pixel manipulation detected',
+                                    'Temporal coherence verified'
+                                ] : [
+                                    'Anomalous facial landmarks detected',
+                                    'Inconsistent lighting artifacts',
+                                    'Pixel-level manipulation found',
+                                    'Temporal inconsistencies detected'
+                                ]
+                            });
+                            return 100;
+                        }
+                        return prev + 2;
+                    });
+                }, 30);
+            };
+
+            const handleReset = () => {
+                setSelectedMedia(null);
+                setResult(null);
+                setProgress(0);
+                setIsScanning(false);
+            };
+
+            return (
+                <div id="deepfake-demo" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
+                                <i className="fas fa-shield-alt text-purple-300"></i>
+                                <span className="text-purple-300 text-sm font-medium">AI-Powered Security</span>
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+                                Real-time Deepfake Detection
+                            </h2>
+                            <p className="text-xl text-purple-200 max-w-3xl mx-auto">
+                                Advanced AI technology to detect manipulated media in real-time. Protect yourself from deepfakes and synthetic media.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Upload & Preview Section */}
+                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                                    <i className="fas fa-cloud-upload-alt text-purple-400"></i>
+                                    Upload Media
+                                </h3>
+
+                                {!selectedMedia ? (
+                                    <div className="border-2 border-dashed border-purple-400/50 rounded-xl p-12 text-center hover:border-purple-400 transition-colors cursor-pointer">
+                                        <label htmlFor="media-upload" className="cursor-pointer">
+                                            <i className="fas fa-image text-6xl text-purple-400 mb-4"></i>
+                                            <p className="text-white font-medium mb-2">Click to upload image or video</p>
+                                            <p className="text-purple-300 text-sm">Supports JPG, PNG, MP4, WebM</p>
+                                            <input
+                                                id="media-upload"
+                                                type="file"
+                                                accept="image/*,video/*"
+                                                onChange={handleFileSelect}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div className="relative rounded-xl overflow-hidden bg-black/50">
+                                            {selectedMedia.startsWith('data:image') ? (
+                                                <img src={selectedMedia} alt="Preview" className="w-full h-auto" />
+                                            ) : (
+                                                <video src={selectedMedia} controls className="w-full h-auto" />
+                                            )}
+                                            {isScanning && <div className="scanning-line"></div>}
+                                        </div>
+
+                                        {isScanning && (
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between text-sm text-purple-300">
+                                                    <span>Analyzing...</span>
+                                                    <span>{progress}%</span>
+                                                </div>
+                                                <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-purple-600 to-indigo-600 transition-all duration-300"
+                                                        style={{ width: `${progress}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handleScan}
+                                                disabled={isScanning}
+                                                className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                            >
+                                                <i className="fas fa-search"></i>
+                                                {isScanning ? 'Scanning...' : 'Analyze Media'}
+                                            </button>
+                                            <button
+                                                onClick={handleReset}
+                                                disabled={isScanning}
+                                                className="px-6 py-3 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <i className="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Results Section */}
+                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+                                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                                    <i className="fas fa-chart-bar text-purple-400"></i>
+                                    Detection Results
+                                </h3>
+
+                                {!result ? (
+                                    <div className="flex flex-col items-center justify-center h-64 text-center">
+                                        <i className="fas fa-chart-line text-6xl text-purple-400/50 mb-4"></i>
+                                        <p className="text-purple-300">Upload and analyze media to see detection results</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        {/* Verdict */}
+                                        <div className={`p-6 rounded-xl ${result.isReal ? 'bg-green-500/20 border border-green-500/50' : 'bg-red-500/20 border border-red-500/50'}`}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-white font-bold text-lg">Verdict</span>
+                                                <i className={`fas ${result.isReal ? 'fa-check-circle text-green-400' : 'fa-exclamation-triangle text-red-400'} text-2xl`}></i>
+                                            </div>
+                                            <p className={`text-2xl font-bold ${result.isReal ? 'text-green-400' : 'text-red-400'} mb-1`}>
+                                                {result.isReal ? 'AUTHENTIC' : 'DEEPFAKE DETECTED'}
+                                            </p>
+                                            <p className="text-purple-200 text-sm">
+                                                Confidence: {result.confidence}%
+                                            </p>
+                                        </div>
+
+                                        {/* Confidence Meter */}
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between text-sm text-purple-300">
+                                                <span>Detection Confidence</span>
+                                                <span>{result.confidence}%</span>
+                                            </div>
+                                            <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                                                <div
+                                                    className={`h-full transition-all duration-500 ${result.isReal ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}
+                                                    style={{ width: `${result.confidence}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Key Indicators */}
+                                        <div>
+                                            <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                                                <i className="fas fa-list-ul text-purple-400"></i>
+                                                Key Indicators
+                                            </h4>
+                                            <ul className="space-y-2">
+                                                {result.indicators.map((indicator, index) => (
+                                                    <li key={index} className="flex items-start gap-2 text-purple-200 text-sm">
+                                                        <i className={`fas fa-${result.isReal ? 'check' : 'times'} ${result.isReal ? 'text-green-400' : 'text-red-400'} mt-1`}></i>
+                                                        <span>{indicator}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        {/* Recommendation */}
+                                        <div className="p-4 bg-purple-500/20 rounded-lg border border-purple-500/50">
+                                            <p className="text-purple-200 text-sm flex items-start gap-2">
+                                                <i className="fas fa-info-circle text-purple-400 mt-0.5"></i>
+                                                <span>
+                                                    {result.isReal
+                                                        ? 'This media appears to be authentic. No signs of manipulation detected.'
+                                                        : 'This media shows signs of manipulation. Exercise caution when sharing or trusting this content.'}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Technology Stack */}
+                        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+                            {[
+                                { icon: 'fa-brain', label: 'Deep Learning', desc: 'Neural networks' },
+                                { icon: 'fa-eye', label: 'Computer Vision', desc: 'Facial analysis' },
+                                { icon: 'fa-wave-square', label: 'Signal Processing', desc: 'Audio detection' },
+                                { icon: 'fa-clock', label: 'Real-time', desc: 'Instant results' }
+                            ].map((tech, index) => (
+                                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 text-center border border-white/10 hover:bg-white/10 transition-all">
+                                    <i className={`fas ${tech.icon} text-3xl text-purple-400 mb-3`}></i>
+                                    <h4 className="text-white font-semibold mb-1">{tech.label}</h4>
+                                    <p className="text-purple-300 text-xs">{tech.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -326,9 +571,10 @@
                     features: [
                         '5 daily credits',
                         'Up to 30 credits/month',
+                        'Renews midnight UTC',
                         'Public projects',
                         'Community support',
-                        'Basic integrations'
+                        'Get 10 extra credits on signup'
                     ],
                     cta: 'Start Free',
                     highlighted: false
@@ -339,12 +585,12 @@
                     period: 'per month',
                     features: [
                         '100+ credits per month',
-                        'Remove Architect badge',
+                        'Remove Lovable badge',
                         'Custom domains',
                         'Private projects',
                         'Priority support',
-                        'Advanced integrations',
-                        'Team collaboration'
+                        'Role-based access control',
+                        'Advanced analytics'
                     ],
                     cta: 'Start Pro Trial',
                     highlighted: true
@@ -360,7 +606,8 @@
                         'SSO authentication',
                         'Opt-out data training',
                         'SLA guarantees',
-                        'Custom contracts'
+                        'Custom contracts',
+                        'Workspace management'
                     ],
                     cta: 'Contact Sales',
                     highlighted: false
@@ -415,10 +662,10 @@
         // Stats Section Component
         function StatsSection() {
             const stats = [
-                { value: '50K+', label: 'Developers' },
+                { value: '30K+', label: 'Developers' },
                 { value: '100K+', label: 'Apps Built' },
-                { value: '1M+', label: 'Deployments' },
-                { value: '99.9%', label: 'Uptime' }
+                { value: '5', label: 'Daily Credits (Free)' },
+                { value: '100+', label: 'Pro Credits/Month' }
             ];
 
             return (
@@ -531,13 +778,13 @@
 
                         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
                             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                                <img src="https://asset.lyzr.app/ktn7GSZS" alt="VEMAR.AI Logo" className="w-10 h-10 rounded-full object-cover" />
-                                <span className="text-xl font-bold text-white">VEMAR.AI</span>
+                                <img src="https://lovable.dev/favicon.ico" alt="Lovable Logo" className="w-10 h-10 object-contain" />
+                                <span className="text-xl font-bold text-white">Lovable</span>
                             </div>
 
                             <div className="text-center md:text-right">
-                                <p className="text-sm">Built by the awesome team at Lyzr</p>
-                                <p className="text-xs text-gray-500 mt-1">© 2024 All rights reserved.</p>
+                                <p className="text-sm">Your superhuman full stack engineer</p>
+                                <p className="text-xs text-gray-500 mt-1">© 2024 Lovable. All rights reserved.</p>
                             </div>
                         </div>
                     </div>
@@ -552,6 +799,7 @@
                     <Navigation />
                     <HeroSection />
                     <FeaturesSection />
+                    <DeepfakeDetectionDemo />
                     <SolutionsSection />
                     <StatsSection />
                     <PricingSection />
