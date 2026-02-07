@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { withApiSecurity } from '@/lib/apiSecurity'
 
 // Mock payment gateway configurations
 // In production, these would come from environment variables
@@ -19,6 +20,16 @@ const PAYMENT_CONFIG = {
 }
 
 export async function POST(request: NextRequest) {
+  // Apply API security - requires payment permission
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['create:payments'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const body = await request.json()
     const { gateway, amount, requestId, clientName, clientEmail, upiId } = body

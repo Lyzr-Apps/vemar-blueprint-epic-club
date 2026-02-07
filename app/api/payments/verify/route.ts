@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { withApiSecurity } from '@/lib/apiSecurity'
 
 export async function POST(request: NextRequest) {
+  // Apply API security - requires payment verification permission
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['verify:payments'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const body = await request.json()
     const {

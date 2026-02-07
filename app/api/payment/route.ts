@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { withApiSecurity } from '@/lib/apiSecurity'
 
 const LYZR_PAYMENT_URL = 'https://pay.lyzr.ai'
 const LYZR_PAYMENT_API = 'https://api.lyzr.ai/v1/payments/sessions'
@@ -10,6 +11,16 @@ function generateSessionId(): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Apply API security - requires payment permission
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['create:payments'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const body = await request.json()
     const { amount, description, user_id, session_id, metadata, demo_mode, currency } = body
@@ -114,7 +125,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Apply API security - requires payment permission
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['read:payments'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   return NextResponse.json({
     success: true,
     payment_url: LYZR_PAYMENT_URL,

@@ -20,6 +20,9 @@ Available permissions:
 - `read:analytics` - View analytics data
 - `admin:api-keys` - Manage API keys (admin only)
 - `send:notifications` - Send notifications
+- `create:payments` - Create payment sessions
+- `read:payments` - View payment gateway information
+- `verify:payments` - Verify payment completion
 
 ### 3. Rate Limiting
 - **Per-Key Limit**: Configurable per API key (default: 100 requests/minute)
@@ -101,6 +104,44 @@ curl -X POST https://api.example.com/api/requests \
   }'
 ```
 
+### Payment API Example
+```bash
+# Create a payment session
+curl -X POST https://api.example.com/api/payment \
+  -H "Authorization: Bearer vemar_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 100.00,
+    "description": "Payment for services",
+    "user_id": "user_123",
+    "currency": "USD",
+    "demo_mode": true
+  }'
+
+# Initiate multi-gateway payment
+curl -X POST https://api.example.com/api/payments/initiate \
+  -H "Authorization: Bearer vemar_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "gateway": "razorpay",
+    "amount": 100.00,
+    "requestId": "req_123",
+    "clientName": "John Doe",
+    "clientEmail": "john@example.com"
+  }'
+
+# Verify payment completion
+curl -X POST https://api.example.com/api/payments/verify \
+  -H "Authorization: Bearer vemar_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "razorpay_payment_id": "pay_abc123",
+    "razorpay_order_id": "order_xyz789",
+    "razorpay_signature": "signature_hash",
+    "requestId": "req_123"
+  }'
+```
+
 ### With HMAC Signature (Optional, for Enhanced Security)
 ```javascript
 const crypto = require('crypto')
@@ -140,6 +181,14 @@ fetch('https://api.example.com/api/requests', {
 |----------|--------|---------------------|-------------|
 | `/api/clients` | GET | `read:clients` | List all clients |
 | `/api/clients` | POST | `write:clients` | Create new client |
+
+### Payment API
+| Endpoint | Method | Required Permission | Description |
+|----------|--------|---------------------|-------------|
+| `/api/payment` | GET | `read:payments` | Get payment gateway info |
+| `/api/payment` | POST | `create:payments` | Create payment session |
+| `/api/payments/initiate` | POST | `create:payments` | Initiate multi-gateway payment |
+| `/api/payments/verify` | POST | `verify:payments` | Verify payment completion |
 
 ### Admin API
 | Endpoint | Method | Required Permission | Description |
