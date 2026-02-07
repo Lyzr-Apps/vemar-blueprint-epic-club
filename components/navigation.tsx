@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -32,6 +32,12 @@ export function Navigation() {
       href: '/analytics',
       icon: FiBarChart2,
       description: 'View performance metrics',
+    },
+    {
+      name: 'Pricing',
+      href: '/pricing',
+      icon: FiDollarSign,
+      description: 'View pricing plans',
     },
   ]
 
