@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FiSend, FiUser, FiMail, FiBuilding, FiFileText, FiClock, FiAlertCircle, FiCheck, FiX, FiMessageSquare } from 'react-icons/fi'
+import { FiSend, FiUser, FiMail, FiBuilding, FiFileText, FiClock, FiAlertCircle, FiCheck, FiX, FiMessageCircle, FiSmartphone } from 'react-icons/fi'
 
 interface Client {
   id: string
@@ -172,7 +172,7 @@ export default function SubmitRequestPage() {
                       ) : (
                         <FiX className="w-4 h-4 text-gray-400" />
                       )}
-                      <FiMessageSquare className="w-4 h-4 text-gray-600" />
+                      <FiSmartphone className="w-4 h-4 text-gray-600" />
                       <span className="text-sm font-medium text-gray-900">SMS</span>
                     </div>
                     <p className="text-xs text-gray-600">
@@ -188,7 +188,7 @@ export default function SubmitRequestPage() {
                       ) : (
                         <FiX className="w-4 h-4 text-gray-400" />
                       )}
-                      <FiMessageSquare className="w-4 h-4 text-gray-600" />
+                      <FiMessageCircle className="w-4 h-4 text-gray-600" />
                       <span className="text-sm font-medium text-gray-900">WhatsApp</span>
                     </div>
                     <p className="text-xs text-gray-600">
