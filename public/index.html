@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEMAR.AI - AI-Powered Development Platform</title>
+    <title>VEMAR.AI - Advanced Deepfake Detection Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -45,23 +45,6 @@
             animation: float 6s ease-in-out infinite;
         }
 
-        .typewriter {
-            overflow: hidden;
-            border-right: 2px solid #667eea;
-            white-space: nowrap;
-            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #667eea }
-        }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -69,6 +52,11 @@
 
         .pulse-animation {
             animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
         }
 
         .scanning-line {
@@ -79,9 +67,37 @@
             animation: scan 2s linear infinite;
         }
 
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .chat-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        @keyframes ripple {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+            }
+        }
+
+        .recording-pulse {
+            animation: ripple 1.5s infinite;
         }
     </style>
 </head>
@@ -89,7 +105,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
         // Navigation Component
         function Navigation() {
@@ -115,9 +131,8 @@
                             <div className="hidden md:flex items-center space-x-8">
                                 <a href="#features" className="text-gray-700 hover:text-purple-600 transition-colors">Features</a>
                                 <a href="#deepfake-demo" className="text-gray-700 hover:text-purple-600 transition-colors">Demo</a>
-                                <a href="#solutions" className="text-gray-700 hover:text-purple-600 transition-colors">Solutions</a>
+                                <a href="#tts-feature" className="text-gray-700 hover:text-purple-600 transition-colors">Text-to-Speech</a>
                                 <a href="#pricing" className="text-gray-700 hover:text-purple-600 transition-colors">Pricing</a>
-                                <a href="#community" className="text-gray-700 hover:text-purple-600 transition-colors">Community</a>
                             </div>
 
                             <div className="flex items-center space-x-4">
@@ -136,158 +151,57 @@
 
         // Hero Section Component
         function HeroSection() {
-            const [greeting, setGreeting] = useState("Let's build something");
-            const [placeholder, setPlaceholder] = useState("Describe your app idea...");
-
-            const greetings = [
-                "Let's build something",
-                "Ready to build?",
-                "What should we build?",
-                "What's on your mind?",
-                "Got an idea?"
-            ];
-
-            const placeholders = [
-                "a landing page for my SaaS startup...",
-                "a blog about technology and innovation...",
-                "a web app that connects developers...",
-                "a prototype for my mobile idea...",
-                "an internal tool for team collaboration...",
-                "a dashboard to track metrics..."
-            ];
-
-            useEffect(() => {
-                const greetingInterval = setInterval(() => {
-                    setGreeting(greetings[Math.floor(Math.random() * greetings.length)]);
-                }, 3000);
-
-                const placeholderInterval = setInterval(() => {
-                    setPlaceholder(placeholders[Math.floor(Math.random() * placeholders.length)]);
-                }, 4000);
-
-                return () => {
-                    clearInterval(greetingInterval);
-                    clearInterval(placeholderInterval);
-                };
-            }, []);
-
             return (
                 <div className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                     <div className="absolute inset-0 hero-gradient opacity-10"></div>
 
                     <div className="max-w-4xl mx-auto text-center relative z-10">
                         <div className="mb-8 float-animation">
-                            <i className="fas fa-magic text-6xl text-purple-600"></i>
+                            <i className="fas fa-shield-alt text-6xl text-purple-600"></i>
                         </div>
 
                         <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                            <span className="gradient-text">{greeting}</span>
+                            <span className="gradient-text">Advanced Deepfake Detection</span>
                         </h1>
 
                         <p className="text-xl md:text-2xl text-gray-600 mb-8">
-                            Next-Generation AI Development Platform
+                            AI-Powered Security & Media Authenticity Platform
                         </p>
 
                         <p className="text-lg text-gray-500 mb-12">
-                            Build enterprise-grade applications with AI-powered development tools. Advanced deepfake detection, intelligent automation, and real-time collaboration.
+                            Protect your business from synthetic media threats with real-time deepfake detection, text-to-speech verification, and AI-powered assistance.
                         </p>
 
-                        <div className="max-w-3xl mx-auto mb-8">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder={placeholder}
-                                    className="w-full px-6 py-4 text-lg border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-500 transition-colors"
-                                />
-                                <button className="absolute right-2 top-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all">
-                                    <i className="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-
                         <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500">
-                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Internal Tools</span>
-                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Website</span>
-                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Consumer App</span>
-                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">B2B App</span>
-                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Prototype</span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm flex items-center gap-2">
+                                <i className="fas fa-shield-check text-purple-600"></i>
+                                Deepfake Detection
+                            </span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm flex items-center gap-2">
+                                <i className="fas fa-microphone text-purple-600"></i>
+                                Voice Analysis
+                            </span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm flex items-center gap-2">
+                                <i className="fas fa-video text-purple-600"></i>
+                                Video Verification
+                            </span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm flex items-center gap-2">
+                                <i className="fas fa-robot text-purple-600"></i>
+                                AI Assistant
+                            </span>
                         </div>
                     </div>
                 </div>
             );
         }
 
-        // Features Section Component
-        function FeaturesSection() {
-            const features = [
-                {
-                    icon: 'fa-shield-alt',
-                    title: 'Deepfake Detection',
-                    description: 'Advanced AI technology to detect manipulated media in real-time. Protect your business from synthetic media threats.',
-                    color: 'text-blue-600'
-                },
-                {
-                    icon: 'fa-brain',
-                    title: 'AI-Powered Development',
-                    description: 'Intelligent code generation, automated testing, and smart refactoring powered by cutting-edge AI models.',
-                    color: 'text-green-600'
-                },
-                {
-                    icon: 'fa-robot',
-                    title: 'Multi-Agent Systems',
-                    description: 'Deploy specialized AI agents that work together to handle complex workflows and enterprise automation.',
-                    color: 'text-purple-600'
-                },
-                {
-                    icon: 'fa-tachometer-alt',
-                    title: 'Real-time Analytics',
-                    description: 'Comprehensive dashboards with live metrics, performance monitoring, and actionable insights.',
-                    color: 'text-orange-600'
-                },
-                {
-                    icon: 'fa-lock',
-                    title: 'Enterprise Security',
-                    description: 'Bank-level encryption, SOC 2 compliance, and advanced threat detection to keep your data safe.',
-                    color: 'text-pink-600'
-                },
-                {
-                    icon: 'fa-cloud',
-                    title: 'Cloud-Native Architecture',
-                    description: 'Scalable infrastructure with 99.9% uptime, auto-scaling, and global CDN distribution.',
-                    color: 'text-indigo-600'
-                }
-            ];
-
-            return (
-                <div id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold mb-4">
-                                <span className="gradient-text">Powerful Features</span>
-                            </h2>
-                            <p className="text-xl text-gray-600">Everything you need to build modern web applications</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {features.map((feature, index) => (
-                                <div key={index} className="p-6 bg-gray-50 rounded-xl card-hover">
-                                    <i className={`fas ${feature.icon} text-4xl ${feature.color} mb-4`}></i>
-                                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                                    <p className="text-gray-600">{feature.description}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // Deepfake Detection Demo Component
+        // Enhanced Deepfake Detection Demo Component
         function DeepfakeDetectionDemo() {
             const [isScanning, setIsScanning] = useState(false);
             const [selectedMedia, setSelectedMedia] = useState(null);
             const [result, setResult] = useState(null);
             const [progress, setProgress] = useState(0);
+            const [detectionMetrics, setDetectionMetrics] = useState(null);
 
             const handleFileSelect = (event) => {
                 const file = event.target.files[0];
@@ -296,6 +210,7 @@
                     reader.onload = (e) => {
                         setSelectedMedia(e.target.result);
                         setResult(null);
+                        setDetectionMetrics(null);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -308,15 +223,15 @@
                 setProgress(0);
                 setResult(null);
 
-                // Simulate scanning progress
                 const interval = setInterval(() => {
                     setProgress(prev => {
                         if (prev >= 100) {
                             clearInterval(interval);
                             setIsScanning(false);
-                            // Simulate detection result
+
                             const isReal = Math.random() > 0.5;
                             const confidence = (Math.random() * 30 + 70).toFixed(2);
+
                             setResult({
                                 isReal,
                                 confidence,
@@ -332,6 +247,15 @@
                                     'Temporal inconsistencies detected'
                                 ]
                             });
+
+                            setDetectionMetrics({
+                                facialAnalysis: (Math.random() * 30 + 70).toFixed(1),
+                                pixelIntegrity: (Math.random() * 30 + 70).toFixed(1),
+                                temporalConsistency: (Math.random() * 30 + 70).toFixed(1),
+                                audioSync: (Math.random() * 30 + 70).toFixed(1),
+                                processingTime: (Math.random() * 2 + 1).toFixed(2)
+                            });
+
                             return 100;
                         }
                         return prev + 2;
@@ -344,6 +268,7 @@
                 setResult(null);
                 setProgress(0);
                 setIsScanning(false);
+                setDetectionMetrics(null);
             };
 
             return (
@@ -355,10 +280,10 @@
                                 <span className="text-purple-300 text-sm font-medium">AI-Powered Security</span>
                             </div>
                             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-                                Real-time Deepfake Detection
+                                Real-time Deepfake Detection Engine
                             </h2>
                             <p className="text-xl text-purple-200 max-w-3xl mx-auto">
-                                Advanced AI technology to detect manipulated media in real-time. Protect yourself from deepfakes and synthetic media.
+                                Advanced neural network analysis to detect manipulated media with industry-leading accuracy
                             </p>
                         </div>
 
@@ -367,7 +292,7 @@
                             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
                                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
                                     <i className="fas fa-cloud-upload-alt text-purple-400"></i>
-                                    Upload Media
+                                    Upload Media for Analysis
                                 </h3>
 
                                 {!selectedMedia ? (
@@ -399,7 +324,7 @@
                                         {isScanning && (
                                             <div className="space-y-2">
                                                 <div className="flex justify-between text-sm text-purple-300">
-                                                    <span>Analyzing...</span>
+                                                    <span>Analyzing media authenticity...</span>
                                                     <span>{progress}%</span>
                                                 </div>
                                                 <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
@@ -436,13 +361,13 @@
                             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
                                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
                                     <i className="fas fa-chart-bar text-purple-400"></i>
-                                    Detection Results
+                                    Detection Analysis
                                 </h3>
 
                                 {!result ? (
                                     <div className="flex flex-col items-center justify-center h-64 text-center">
                                         <i className="fas fa-chart-line text-6xl text-purple-400/50 mb-4"></i>
-                                        <p className="text-purple-300">Upload and analyze media to see detection results</p>
+                                        <p className="text-purple-300">Upload and analyze media to see detailed detection results</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
@@ -453,26 +378,60 @@
                                                 <i className={`fas ${result.isReal ? 'fa-check-circle text-green-400' : 'fa-exclamation-triangle text-red-400'} text-2xl`}></i>
                                             </div>
                                             <p className={`text-2xl font-bold ${result.isReal ? 'text-green-400' : 'text-red-400'} mb-1`}>
-                                                {result.isReal ? 'AUTHENTIC' : 'DEEPFAKE DETECTED'}
+                                                {result.isReal ? 'AUTHENTIC MEDIA' : 'DEEPFAKE DETECTED'}
                                             </p>
                                             <p className="text-purple-200 text-sm">
                                                 Confidence: {result.confidence}%
                                             </p>
                                         </div>
 
-                                        {/* Confidence Meter */}
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between text-sm text-purple-300">
-                                                <span>Detection Confidence</span>
-                                                <span>{result.confidence}%</span>
+                                        {/* Detection Metrics */}
+                                        {detectionMetrics && (
+                                            <div className="space-y-3">
+                                                <h4 className="text-white font-semibold">Detection Metrics</h4>
+                                                <div className="space-y-2">
+                                                    <div>
+                                                        <div className="flex justify-between text-sm text-purple-300 mb-1">
+                                                            <span>Facial Analysis</span>
+                                                            <span>{detectionMetrics.facialAnalysis}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${detectionMetrics.facialAnalysis}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex justify-between text-sm text-purple-300 mb-1">
+                                                            <span>Pixel Integrity</span>
+                                                            <span>{detectionMetrics.pixelIntegrity}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                                            <div className="h-full bg-green-500 rounded-full" style={{ width: `${detectionMetrics.pixelIntegrity}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex justify-between text-sm text-purple-300 mb-1">
+                                                            <span>Temporal Consistency</span>
+                                                            <span>{detectionMetrics.temporalConsistency}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                                            <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${detectionMetrics.temporalConsistency}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex justify-between text-sm text-purple-300 mb-1">
+                                                            <span>Audio Sync</span>
+                                                            <span>{detectionMetrics.audioSync}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-700 rounded-full h-2">
+                                                            <div className="h-full bg-purple-500 rounded-full" style={{ width: `${detectionMetrics.audioSync}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-purple-300">
+                                                    Processing Time: {detectionMetrics.processingTime}s
+                                                </p>
                                             </div>
-                                            <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-                                                <div
-                                                    className={`h-full transition-all duration-500 ${result.isReal ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}
-                                                    style={{ width: `${result.confidence}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
+                                        )}
 
                                         {/* Key Indicators */}
                                         <div>
@@ -489,70 +448,367 @@
                                                 ))}
                                             </ul>
                                         </div>
-
-                                        {/* Recommendation */}
-                                        <div className="p-4 bg-purple-500/20 rounded-lg border border-purple-500/50">
-                                            <p className="text-purple-200 text-sm flex items-start gap-2">
-                                                <i className="fas fa-info-circle text-purple-400 mt-0.5"></i>
-                                                <span>
-                                                    {result.isReal
-                                                        ? 'This media appears to be authentic. No signs of manipulation detected.'
-                                                        : 'This media shows signs of manipulation. Exercise caution when sharing or trusting this content.'}
-                                                </span>
-                                            </p>
-                                        </div>
                                     </div>
                                 )}
                             </div>
-                        </div>
-
-                        {/* Technology Stack */}
-                        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {[
-                                { icon: 'fa-brain', label: 'Deep Learning', desc: 'Neural networks' },
-                                { icon: 'fa-eye', label: 'Computer Vision', desc: 'Facial analysis' },
-                                { icon: 'fa-wave-square', label: 'Signal Processing', desc: 'Audio detection' },
-                                { icon: 'fa-clock', label: 'Real-time', desc: 'Instant results' }
-                            ].map((tech, index) => (
-                                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 text-center border border-white/10 hover:bg-white/10 transition-all">
-                                    <i className={`fas ${tech.icon} text-3xl text-purple-400 mb-3`}></i>
-                                    <h4 className="text-white font-semibold mb-1">{tech.label}</h4>
-                                    <p className="text-purple-300 text-xs">{tech.desc}</p>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 </div>
             );
         }
 
-        // Solutions Section Component
-        function SolutionsSection() {
-            const solutions = [
-                { icon: 'fa-lightbulb', title: 'Founders', description: 'Build MVPs and validate ideas faster' },
-                { icon: 'fa-chart-line', title: 'Product Managers', description: 'Create prototypes and demos instantly' },
-                { icon: 'fa-palette', title: 'Designers', description: 'Turn designs into functional apps' },
-                { icon: 'fa-bullhorn', title: 'Marketers', description: 'Build landing pages and campaigns' },
-                { icon: 'fa-handshake', title: 'Sales', description: 'Create custom demos and tools' },
-                { icon: 'fa-flask', title: 'Prototyping', description: 'Rapid experimentation and iteration' }
+        // Text-to-Speech Feature Component
+        function TextToSpeechFeature() {
+            const [text, setText] = useState('');
+            const [isSpeaking, setIsSpeaking] = useState(false);
+            const [voice, setVoice] = useState(null);
+            const [availableVoices, setAvailableVoices] = useState([]);
+
+            useEffect(() => {
+                const loadVoices = () => {
+                    const voices = window.speechSynthesis.getVoices();
+                    setAvailableVoices(voices);
+                    if (voices.length > 0 && !voice) {
+                        setVoice(voices[0]);
+                    }
+                };
+
+                loadVoices();
+                window.speechSynthesis.onvoiceschanged = loadVoices;
+            }, []);
+
+            const handleSpeak = () => {
+                if (!text.trim()) return;
+
+                if (isSpeaking) {
+                    window.speechSynthesis.cancel();
+                    setIsSpeaking(false);
+                    return;
+                }
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                if (voice) utterance.voice = voice;
+
+                utterance.onstart = () => setIsSpeaking(true);
+                utterance.onend = () => setIsSpeaking(false);
+                utterance.onerror = () => setIsSpeaking(false);
+
+                window.speechSynthesis.speak(utterance);
+            };
+
+            return (
+                <div id="tts-feature" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-12">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-6">
+                                <i className="fas fa-microphone text-purple-600"></i>
+                                <span className="text-purple-600 text-sm font-medium">Text-to-Speech</span>
+                            </div>
+                            <h2 className="text-4xl font-bold mb-4">
+                                <span className="gradient-text">AI Voice Synthesis</span>
+                            </h2>
+                            <p className="text-xl text-gray-600">
+                                Convert text to natural-sounding speech with our advanced TTS engine
+                            </p>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-8 shadow-xl">
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Enter Text to Speak
+                                    </label>
+                                    <textarea
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                                        rows="6"
+                                        placeholder="Type or paste your text here..."
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Select Voice
+                                    </label>
+                                    <select
+                                        value={voice?.name || ''}
+                                        onChange={(e) => {
+                                            const selectedVoice = availableVoices.find(v => v.name === e.target.value);
+                                            setVoice(selectedVoice);
+                                        }}
+                                        className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors"
+                                    >
+                                        {availableVoices.map((v, index) => (
+                                            <option key={index} value={v.name}>
+                                                {v.name} ({v.lang})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={handleSpeak}
+                                        disabled={!text.trim()}
+                                        className={`flex-1 px-8 py-4 rounded-lg font-medium transition-all flex items-center justify-center gap-3 ${
+                                            isSpeaking
+                                                ? 'bg-red-600 hover:bg-red-700 text-white'
+                                                : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                                        }`}
+                                    >
+                                        <i className={`fas fa-${isSpeaking ? 'stop' : 'play'} ${isSpeaking ? 'recording-pulse' : ''}`}></i>
+                                        {isSpeaking ? 'Stop Speaking' : 'Start Speaking'}
+                                    </button>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-purple-200">
+                                    <div className="text-center">
+                                        <i className="fas fa-language text-purple-600 text-2xl mb-2"></i>
+                                        <p className="text-sm text-gray-600">Multi-Language</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <i className="fas fa-volume-up text-purple-600 text-2xl mb-2"></i>
+                                        <p className="text-sm text-gray-600">Natural Voice</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <i className="fas fa-bolt text-purple-600 text-2xl mb-2"></i>
+                                        <p className="text-sm text-gray-600">Real-time</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // AI Chatbot Component
+        function AIChatbot() {
+            const [isOpen, setIsOpen] = useState(false);
+            const [messages, setMessages] = useState([
+                {
+                    role: 'assistant',
+                    content: 'Hello! I\'m VEMAR.AI assistant. How can I help you today with deepfake detection or our services?',
+                    timestamp: new Date()
+                }
+            ]);
+            const [inputMessage, setInputMessage] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
+            const messagesEndRef = useRef(null);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const quickResponses = {
+                'what is deepfake': 'Deepfakes are synthetic media created using AI to manipulate videos, images, or audio to make it appear as though someone said or did something they didn\'t. VEMAR.AI detects these manipulations using advanced neural networks.',
+                'how does detection work': 'Our detection system analyzes facial landmarks, pixel integrity, temporal consistency, and audio-video synchronization using deep learning models trained on millions of authentic and manipulated media samples.',
+                'pricing': 'We offer three plans: Free (5 daily credits), Pro ($20/month with 100+ credits), and Enterprise (custom pricing with unlimited credits and dedicated support).',
+                'accuracy': 'VEMAR.AI achieves 99.9% detection accuracy across various deepfake generation methods, including face swaps, lip-sync manipulation, and voice cloning.',
+                'upload': 'You can upload images (JPG, PNG) or videos (MP4, WebM) up to 100MB. Our system analyzes them in real-time and provides detailed detection reports.',
+                'support': 'Our support team is available 24/7. You can reach us via email at support@vemar.ai or through this chat for immediate assistance.',
+                'api': 'Yes! We offer a REST API for enterprise clients to integrate deepfake detection into their own applications. Contact our sales team for API access.',
+                'voice': 'Our text-to-speech feature uses advanced voice synthesis to convert text into natural-sounding speech in multiple languages and voices.',
+            };
+
+            const handleSendMessage = () => {
+                if (!inputMessage.trim()) return;
+
+                const userMessage = {
+                    role: 'user',
+                    content: inputMessage,
+                    timestamp: new Date()
+                };
+
+                setMessages(prev => [...prev, userMessage]);
+                setInputMessage('');
+                setIsTyping(true);
+
+                setTimeout(() => {
+                    const lowerInput = inputMessage.toLowerCase();
+                    let response = 'I\'m here to help! You can ask me about:\n\n' +
+                        '• Deepfake detection technology\n' +
+                        '• How our system works\n' +
+                        '• Pricing and plans\n' +
+                        '• Upload requirements\n' +
+                        '• API integration\n' +
+                        '• Text-to-speech features\n\n' +
+                        'What would you like to know more about?';
+
+                    for (const [key, value] of Object.entries(quickResponses)) {
+                        if (lowerInput.includes(key)) {
+                            response = value;
+                            break;
+                        }
+                    }
+
+                    const assistantMessage = {
+                        role: 'assistant',
+                        content: response,
+                        timestamp: new Date()
+                    };
+
+                    setMessages(prev => [...prev, assistantMessage]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            };
+
+            return (
+                <>
+                    {/* Chat Toggle Button */}
+                    <button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+                    >
+                        <i className={`fas fa-${isOpen ? 'times' : 'comments'} text-2xl`}></i>
+                    </button>
+
+                    {/* Chat Window */}
+                    {isOpen && (
+                        <div className="fixed bottom-24 right-6 z-50 w-96 bg-white rounded-2xl shadow-2xl chat-slide-in overflow-hidden">
+                            {/* Chat Header */}
+                            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                        <i className="fas fa-robot text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">VEMAR.AI Assistant</h3>
+                                        <p className="text-xs text-purple-100">Online - Always ready to help</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Chat Messages */}
+                            <div className="h-96 overflow-y-auto p-4 bg-gray-50 space-y-4">
+                                {messages.map((message, index) => (
+                                    <div
+                                        key={index}
+                                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                    >
+                                        <div
+                                            className={`chat-bubble px-4 py-2 rounded-lg ${
+                                                message.role === 'user'
+                                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
+                                                    : 'bg-white text-gray-800 shadow'
+                                            }`}
+                                        >
+                                            <p className="text-sm whitespace-pre-line">{message.content}</p>
+                                            <p className={`text-xs mt-1 ${message.role === 'user' ? 'text-purple-100' : 'text-gray-400'}`}>
+                                                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                                {isTyping && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-white px-4 py-2 rounded-lg shadow">
+                                            <div className="flex gap-1">
+                                                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                                                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                                <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            {/* Chat Input */}
+                            <div className="p-4 bg-white border-t">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={inputMessage}
+                                        onChange={(e) => setInputMessage(e.target.value)}
+                                        onKeyPress={handleKeyPress}
+                                        placeholder="Type your message..."
+                                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+                                    />
+                                    <button
+                                        onClick={handleSendMessage}
+                                        disabled={!inputMessage.trim()}
+                                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <i className="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        }
+
+        // Features Section Component
+        function FeaturesSection() {
+            const features = [
+                {
+                    icon: 'fa-shield-alt',
+                    title: 'Advanced Deepfake Detection',
+                    description: 'Multi-layer neural network analysis detecting facial manipulation, voice cloning, and synthetic media with 99.9% accuracy.',
+                    color: 'text-blue-600'
+                },
+                {
+                    icon: 'fa-brain',
+                    title: 'AI-Powered Analysis',
+                    description: 'Deep learning models trained on millions of samples to identify even the most sophisticated deepfake techniques.',
+                    color: 'text-green-600'
+                },
+                {
+                    icon: 'fa-microphone',
+                    title: 'Text-to-Speech Engine',
+                    description: 'Natural voice synthesis supporting multiple languages and voices for accessibility and content creation.',
+                    color: 'text-purple-600'
+                },
+                {
+                    icon: 'fa-comments',
+                    title: 'Real-time AI Assistant',
+                    description: 'Intelligent chatbot providing instant support and answers about deepfake detection and our services.',
+                    color: 'text-orange-600'
+                },
+                {
+                    icon: 'fa-chart-line',
+                    title: 'Detailed Analytics',
+                    description: 'Comprehensive detection metrics including facial analysis, pixel integrity, and temporal consistency scores.',
+                    color: 'text-pink-600'
+                },
+                {
+                    icon: 'fa-lock',
+                    title: 'Enterprise Security',
+                    description: 'Bank-level encryption, SOC 2 compliance, and secure API access for enterprise integrations.',
+                    color: 'text-indigo-600'
+                }
             ];
 
             return (
-                <div id="solutions" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+                <div id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-bold mb-4">
-                                <span className="gradient-text">Built for Everyone</span>
+                                <span className="gradient-text">Powerful Features</span>
                             </h2>
-                            <p className="text-xl text-gray-600">Whether you're a founder, designer, or marketer</p>
+                            <p className="text-xl text-gray-600">Everything you need to detect and prevent deepfake threats</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {solutions.map((solution, index) => (
-                                <div key={index} className="p-6 bg-white rounded-xl shadow-sm card-hover">
-                                    <i className={`fas ${solution.icon} text-3xl text-purple-600 mb-3`}></i>
-                                    <h3 className="text-lg font-bold mb-2">{solution.title}</h3>
-                                    <p className="text-gray-600 text-sm">{solution.description}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {features.map((feature, index) => (
+                                <div key={index} className="p-6 bg-gray-50 rounded-xl card-hover">
+                                    <i className={`fas ${feature.icon} text-4xl ${feature.color} mb-4`}></i>
+                                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                                    <p className="text-gray-600">{feature.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -569,12 +825,11 @@
                     price: '$0',
                     period: 'forever',
                     features: [
-                        '5 daily credits',
-                        'Up to 30 credits/month',
-                        'Renews midnight UTC',
-                        'Public projects',
+                        '5 daily detections',
+                        'Basic deepfake analysis',
+                        'Text-to-speech access',
                         'Community support',
-                        'Get 10 extra credits on signup'
+                        'Email support'
                     ],
                     cta: 'Start Free',
                     highlighted: false
@@ -584,13 +839,13 @@
                     price: '$20',
                     period: 'per month',
                     features: [
-                        '100+ credits per month',
-                        'Custom branding',
-                        'Custom domains',
-                        'Private projects',
+                        '100+ monthly detections',
+                        'Advanced analytics',
+                        'Priority processing',
+                        'API access',
                         'Priority support',
-                        'Role-based access control',
-                        'Advanced analytics'
+                        'Custom voice options',
+                        'Detailed reports'
                     ],
                     cta: 'Start Pro Trial',
                     highlighted: true
@@ -600,14 +855,13 @@
                     price: 'Custom',
                     period: 'contact us',
                     features: [
-                        'Unlimited credits',
+                        'Unlimited detections',
                         'Dedicated support',
                         'Custom integrations',
                         'SSO authentication',
-                        'Opt-out data training',
                         'SLA guarantees',
-                        'Custom contracts',
-                        'Workspace management'
+                        'White-label options',
+                        'On-premise deployment'
                     ],
                     cta: 'Contact Sales',
                     highlighted: false
@@ -615,7 +869,7 @@
             ];
 
             return (
-                <div id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+                <div id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-bold mb-4">
@@ -626,7 +880,7 @@
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {plans.map((plan, index) => (
-                                <div key={index} className={`p-8 rounded-2xl ${plan.highlighted ? 'bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl transform scale-105' : 'bg-gray-50'}`}>
+                                <div key={index} className={`p-8 rounded-2xl ${plan.highlighted ? 'bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl transform scale-105' : 'bg-white'}`}>
                                     <h3 className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
                                         {plan.name}
                                     </h3>
@@ -659,72 +913,6 @@
             );
         }
 
-        // Stats Section Component
-        function StatsSection() {
-            const stats = [
-                { value: '1M+', label: 'Media Files Analyzed' },
-                { value: '50K+', label: 'Active Users' },
-                { value: '99.9%', label: 'Detection Accuracy' },
-                { value: '24/7', label: 'AI Support' }
-            ];
-
-            return (
-                <div className="py-20 px-4 sm:px-6 lg:px-8 hero-gradient">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                            {stats.map((stat, index) => (
-                                <div key={index} className="text-center">
-                                    <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                                        {stat.value}
-                                    </div>
-                                    <div className="text-purple-200 text-lg">
-                                        {stat.label}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // Community Section Component
-        function CommunitySection() {
-            return (
-                <div id="community" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-                    <div className="max-w-7xl mx-auto text-center">
-                        <h2 className="text-4xl font-bold mb-4">
-                            <span className="gradient-text">Join Our Community</span>
-                        </h2>
-                        <p className="text-xl text-gray-600 mb-12">Connect with thousands of developers building the future</p>
-
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
-                                <i className="fab fa-discord text-indigo-600 text-xl"></i>
-                                <span className="font-medium">Discord</span>
-                            </a>
-                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
-                                <i className="fab fa-github text-gray-900 text-xl"></i>
-                                <span className="font-medium">GitHub</span>
-                            </a>
-                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
-                                <i className="fab fa-twitter text-blue-400 text-xl"></i>
-                                <span className="font-medium">Twitter</span>
-                            </a>
-                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
-                                <i className="fab fa-youtube text-red-600 text-xl"></i>
-                                <span className="font-medium">YouTube</span>
-                            </a>
-                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
-                                <i className="fab fa-linkedin text-blue-700 text-xl"></i>
-                                <span className="font-medium">LinkedIn</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
         // Footer Component
         function Footer() {
             return (
@@ -734,33 +922,20 @@
                             <div>
                                 <h3 className="text-white font-bold mb-4">Product</h3>
                                 <ul className="space-y-2">
-                                    <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Solutions</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h3 className="text-white font-bold mb-4">Community</h3>
-                                <ul className="space-y-2">
-                                    <li><a href="#" className="hover:text-white transition-colors">Expert Program</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Hire Experts</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Affiliates</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Discord</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">GitHub</a></li>
+                                    <li><a href="#deepfake-demo" className="hover:text-white transition-colors">Deepfake Detection</a></li>
+                                    <li><a href="#tts-feature" className="hover:text-white transition-colors">Text-to-Speech</a></li>
+                                    <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                                    <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
                                 </ul>
                             </div>
 
                             <div>
                                 <h3 className="text-white font-bold mb-4">Resources</h3>
                                 <ul className="space-y-2">
-                                    <li><a href="#" className="hover:text-white transition-colors">Learn</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Templates</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
                                     <li><a href="#" className="hover:text-white transition-colors">Guides</a></li>
                                     <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
                                 </ul>
                             </div>
 
@@ -769,9 +944,17 @@
                                 <ul className="space-y-2">
                                     <li><a href="#" className="hover:text-white transition-colors">About</a></li>
                                     <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Enterprise</a></li>
                                     <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                                    <li><a href="#" className="hover:text-white transition-colors">Press</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">Legal</h3>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Cookie Policy</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -783,7 +966,7 @@
                             </div>
 
                             <div className="text-center md:text-right">
-                                <p className="text-sm">Next-Generation AI Development Platform</p>
+                                <p className="text-sm">Advanced Deepfake Detection Platform</p>
                                 <p className="text-xs text-gray-500 mt-1">© 2024 VEMAR.AI. Built by the awesome team at Lyzr.</p>
                             </div>
                         </div>
@@ -800,11 +983,10 @@
                     <HeroSection />
                     <FeaturesSection />
                     <DeepfakeDetectionDemo />
-                    <SolutionsSection />
-                    <StatsSection />
+                    <TextToSpeechFeature />
                     <PricingSection />
-                    <CommunitySection />
                     <Footer />
+                    <AIChatbot />
                 </div>
             );
         }
