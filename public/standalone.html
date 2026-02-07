@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Client Request Manager - Architect by Lyzr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Request types
+        const AGENT_CONFIG = {
+            SUPPORT: { name: 'Support Agent', description: 'Handles customer support and general inquiries' },
+            TECHNICAL: { name: 'Technical Agent', description: 'Resolves technical issues and bug reports' },
+            CREATIVE: { name: 'Creative Agent', description: 'Manages design and creative requests' },
+            CONSULTING: { name: 'Consulting Agent', description: 'Provides business consulting and strategy' },
+            CONTENT: { name: 'Content Agent', description: 'Creates and manages content requests' },
+            MARKETING: { name: 'Marketing Agent', description: 'Handles marketing campaigns and promotions' },
+            ANALYTICS: { name: 'Analytics Agent', description: 'Analyzes data and generates reports' },
+            GENERAL: { name: 'General Agent', description: 'Handles miscellaneous requests' }
+        };
+
+        function App() {
+            const [requests, setRequests] = useState([]);
+            const [agentStats, setAgentStats] = useState([]);
+            const [activeTab, setActiveTab] = useState('requests');
+            const [newRequest, setNewRequest] = useState({
+                clientName: '',
+                clientEmail: '',
+                category: 'GENERAL',
+                priority: 'MEDIUM',
+                title: '',
+                description: ''
+            });
+
+            useEffect(() => {
+                // Mock requests
+                const mockRequests = [
+                    {
+                        id: '1',
+                        clientName: 'Acme Corp',
+                        clientEmail: 'contact@acme.com',
+                        category: 'TECHNICAL',
+                        priority: 'HIGH',
+                        status: 'IN_PROGRESS',
+                        title: 'API Integration Issue',
+                        description: 'Need help integrating payment gateway API',
+                        assignedAgent: AGENT_CONFIG.TECHNICAL.name,
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+                        updatedAt: new Date(Date.now() - 30 * 60 * 1000)
+                    },
+                    {
+                        id: '2',
+                        clientName: 'StartupX',
+                        clientEmail: 'team@startupx.io',
+                        category: 'CREATIVE',
+                        priority: 'MEDIUM',
+                        status: 'PENDING',
+                        title: 'Logo Design Request',
+                        description: 'Need a modern logo for our SaaS product',
+                        assignedAgent: AGENT_CONFIG.CREATIVE.name,
+                        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+                        updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000)
+                    },
+                    {
+                        id: '3',
+                        clientName: 'TechFlow Inc',
+                        clientEmail: 'support@techflow.com',
+                        category: 'SUPPORT',
+                        priority: 'URGENT',
+                        status: 'IN_PROGRESS',
+                        title: 'Account Access Issue',
+                        description: 'Client cannot access their dashboard',
+                        assignedAgent: AGENT_CONFIG.SUPPORT.name,
+                        createdAt: new Date(Date.now() - 15 * 60 * 1000),
+                        updatedAt: new Date(Date.now() - 5 * 60 * 1000)
+                    }
+                ];
+
+                // Mock agent stats
+                const mockAgentStats = Object.entries(AGENT_CONFIG).map(([category, config]) => ({
+                    name: config.name,
+                    category: category,
+                    activeRequests: Math.floor(Math.random() * 5),
+                    completedToday: Math.floor(Math.random() * 10),
+                    avgResponseTime: `${Math.floor(Math.random() * 30 + 10)}m`,
+                    status: Math.random() > 0.5 ? 'active' : 'idle'
+                }));
+
+                setRequests(mockRequests);
+                setAgentStats(mockAgentStats);
+            }, []);
+
+            const handleSubmitRequest = (e) => {
+                e.preventDefault();
+
+                const request = {
+                    id: Date.now().toString(),
+                    ...newRequest,
+                    status: 'PENDING',
+                    assignedAgent: AGENT_CONFIG[newRequest.category].name,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                setRequests(prev => [request, ...prev]);
+                setNewRequest({
+                    clientName: '',
+                    clientEmail: '',
+                    category: 'GENERAL',
+                    priority: 'MEDIUM',
+                    title: '',
+                    description: ''
+                });
+                setActiveTab('requests');
+            };
+
+            const getPriorityColor = (priority) => {
+                switch (priority) {
+                    case 'URGENT': return 'bg-red-100 text-red-800 border border-red-300';
+                    case 'HIGH': return 'bg-orange-100 text-orange-800 border border-orange-300';
+                    case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 border border-yellow-300';
+                    case 'LOW': return 'bg-green-100 text-green-800 border border-green-300';
+                }
+            };
+
+            const getStatusColor = (status) => {
+                switch (status) {
+                    case 'PENDING': return 'bg-gray-100 text-gray-800 border border-gray-300';
+                    case 'IN_PROGRESS': return 'bg-blue-100 text-blue-800 border border-blue-300';
+                    case 'COMPLETED': return 'bg-green-100 text-green-800 border border-green-300';
+                    case 'CANCELLED': return 'bg-red-100 text-red-800 border border-red-300';
+                }
+            };
+
+            const getAgentStatusColor = (status) => {
+                switch (status) {
+                    case 'active': return 'bg-green-100 text-green-800';
+                    case 'idle': return 'bg-gray-100 text-gray-800';
+                    case 'busy': return 'bg-orange-100 text-orange-800';
+                }
+            };
+
+            const stats = {
+                totalRequests: requests.length,
+                activeRequests: requests.filter(r => r.status === 'IN_PROGRESS').length,
+                pendingRequests: requests.filter(r => r.status === 'PENDING').length,
+                completedToday: requests.filter(r =>
+                    r.status === 'COMPLETED' &&
+                    new Date(r.updatedAt).toDateString() === new Date().toDateString()
+                ).length
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
+                        {/* Header */}
+                        <div className="text-center space-y-2">
+                            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                Multi-Agent Client Request Manager
+                            </h1>
+                            <p className="text-gray-600">
+                                Intelligent request routing powered by specialized AI agents
+                            </p>
+                        </div>
+
+                        {/* Statistics Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-600">Total Requests</p>
+                                        <p className="text-2xl font-bold">{stats.totalRequests}</p>
+                                        <p className="text-xs text-gray-500 mt-1">All time</p>
+                                    </div>
+                                    <i className="fas fa-chart-line text-gray-400 text-2xl"></i>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-600">Active</p>
+                                        <p className="text-2xl font-bold text-blue-600">{stats.activeRequests}</p>
+                                        <p className="text-xs text-gray-500 mt-1">In progress</p>
+                                    </div>
+                                    <i className="fas fa-clock text-blue-500 text-2xl"></i>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-600">Pending</p>
+                                        <p className="text-2xl font-bold text-orange-600">{stats.pendingRequests}</p>
+                                        <p className="text-xs text-gray-500 mt-1">Awaiting assignment</p>
+                                    </div>
+                                    <i className="fas fa-exclamation-circle text-orange-500 text-2xl"></i>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-600">Completed Today</p>
+                                        <p className="text-2xl font-bold text-green-600">{stats.completedToday}</p>
+                                        <p className="text-xs text-gray-500 mt-1">Last 24 hours</p>
+                                    </div>
+                                    <i className="fas fa-check-circle text-green-500 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="bg-white rounded-lg shadow">
+                            <div className="border-b">
+                                <div className="flex">
+                                    <button
+                                        className={`px-6 py-3 font-medium ${activeTab === 'requests' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                                        onClick={() => setActiveTab('requests')}
+                                    >
+                                        Client Requests
+                                    </button>
+                                    <button
+                                        className={`px-6 py-3 font-medium ${activeTab === 'agents' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                                        onClick={() => setActiveTab('agents')}
+                                    >
+                                        Agent Dashboard
+                                    </button>
+                                    <button
+                                        className={`px-6 py-3 font-medium ${activeTab === 'new' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                                        onClick={() => setActiveTab('new')}
+                                    >
+                                        New Request
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="p-6">
+                                {/* Requests Tab */}
+                                {activeTab === 'requests' && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h2 className="text-xl font-bold mb-2">Active Client Requests</h2>
+                                            <p className="text-gray-600 text-sm mb-4">
+                                                Manage and monitor all client requests across specialized agents
+                                            </p>
+                                        </div>
+
+                                        {requests.length === 0 ? (
+                                            <div className="text-center py-12 text-gray-500">
+                                                No requests yet. Create your first request to get started.
+                                            </div>
+                                        ) : (
+                                            requests.map((request) => (
+                                                <div key={request.id} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <h3 className="font-semibold text-lg">{request.title}</h3>
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getPriorityColor(request.priority)}`}>
+                                                                {request.priority}
+                                                            </span>
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+                                                                {request.status.replace('_', ' ')}
+                                                            </span>
+                                                        </div>
+
+                                                        <p className="text-gray-600 text-sm">{request.description}</p>
+
+                                                        <div className="flex items-center gap-6 text-sm text-gray-500">
+                                                            <div className="flex items-center gap-2">
+                                                                <i className="fas fa-user"></i>
+                                                                <span>{request.clientName}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <i className="fas fa-clock"></i>
+                                                                <span>{new Date(request.createdAt).toLocaleString()}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2 pt-2">
+                                                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium border border-blue-200">
+                                                                {request.assignedAgent}
+                                                            </span>
+                                                            <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium border border-purple-200">
+                                                                {request.category}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Agents Tab */}
+                                {activeTab === 'agents' && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                                                <i className="fas fa-users"></i>
+                                                Specialized Agent Dashboard
+                                            </h2>
+                                            <p className="text-gray-600 text-sm mb-4">
+                                                Monitor performance and availability of your AI agents
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {agentStats.map((agent) => (
+                                                <div key={agent.name} className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow">
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-start justify-between">
+                                                            <div>
+                                                                <h3 className="font-semibold">{agent.name}</h3>
+                                                                <p className="text-sm text-gray-500">
+                                                                    {AGENT_CONFIG[agent.category].description}
+                                                                </p>
+                                                            </div>
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getAgentStatusColor(agent.status)}`}>
+                                                                {agent.status}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-3 gap-2 pt-2 border-t">
+                                                            <div>
+                                                                <p className="text-xs text-gray-500">Active</p>
+                                                                <p className="text-lg font-semibold">{agent.activeRequests}</p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs text-gray-500">Completed</p>
+                                                                <p className="text-lg font-semibold text-green-600">{agent.completedToday}</p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs text-gray-500">Avg Time</p>
+                                                                <p className="text-lg font-semibold text-blue-600">{agent.avgResponseTime}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* New Request Tab */}
+                                {activeTab === 'new' && (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h2 className="text-xl font-bold mb-2">Create New Client Request</h2>
+                                            <p className="text-gray-600 text-sm mb-4">
+                                                Submit a new request and let our AI agents handle it automatically
+                                            </p>
+                                        </div>
+
+                                        <form onSubmit={handleSubmitRequest} className="space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">Client Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={newRequest.clientName}
+                                                        onChange={(e) => setNewRequest(prev => ({ ...prev, clientName: e.target.value }))}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        placeholder="Acme Corporation"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">Client Email</label>
+                                                    <input
+                                                        type="email"
+                                                        value={newRequest.clientEmail}
+                                                        onChange={(e) => setNewRequest(prev => ({ ...prev, clientEmail: e.target.value }))}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        placeholder="contact@acme.com"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">Request Category</label>
+                                                    <select
+                                                        value={newRequest.category}
+                                                        onChange={(e) => setNewRequest(prev => ({ ...prev, category: e.target.value }))}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    >
+                                                        {Object.entries(AGENT_CONFIG).map(([key, config]) => (
+                                                            <option key={key} value={key}>
+                                                                {config.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <p className="text-xs text-gray-500">
+                                                        {AGENT_CONFIG[newRequest.category].description}
+                                                    </p>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">Priority Level</label>
+                                                    <select
+                                                        value={newRequest.priority}
+                                                        onChange={(e) => setNewRequest(prev => ({ ...prev, priority: e.target.value }))}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    >
+                                                        <option value="LOW">Low</option>
+                                                        <option value="MEDIUM">Medium</option>
+                                                        <option value="HIGH">High</option>
+                                                        <option value="URGENT">Urgent</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="block text-sm font-medium text-gray-700">Request Title</label>
+                                                <input
+                                                    type="text"
+                                                    value={newRequest.title}
+                                                    onChange={(e) => setNewRequest(prev => ({ ...prev, title: e.target.value }))}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    placeholder="Brief description of the request"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="block text-sm font-medium text-gray-700">Request Details</label>
+                                                <textarea
+                                                    value={newRequest.description}
+                                                    onChange={(e) => setNewRequest(prev => ({ ...prev, description: e.target.value }))}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                    placeholder="Provide detailed information about your request..."
+                                                    rows="6"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-4 border-t">
+                                                <div className="text-sm text-gray-500">
+                                                    Will be assigned to: <span className="font-semibold text-blue-600">
+                                                        {AGENT_CONFIG[newRequest.category].name}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    type="submit"
+                                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                                >
+                                                    <i className="fas fa-paper-plane"></i>
+                                                    Submit Request
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="text-center text-sm text-gray-500 pt-8">
+                            <p>Built by the awesome team at Lyzr</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

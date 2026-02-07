@@ -9,6 +9,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  // Disable Turbopack and configure root
+  turbopack: false,
+  experimental: {
+    turbo: false,
+  },
 }
 
 module.exports = nextConfig
