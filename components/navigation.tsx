@@ -45,7 +45,7 @@ export function Navigation() {
               <FiHome className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Client Hub
+              VEMAR AI
             </span>
           </Link>
 

@@ -223,7 +223,7 @@ export default function ClientRequestManager() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Multi-Agent Client Request Manager
+            VEMAR AI
           </h1>
           <p className="text-gray-600">
             Intelligent request routing powered by specialized AI agents

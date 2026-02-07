@@ -7,7 +7,7 @@ import { Navigation } from '@/components/navigation'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Client Request Manager - Architect by Lyzr',
+  title: 'VEMAR AI - Architect by Lyzr',
   description: 'Multi-agent system for managing client requests',
 }
 
