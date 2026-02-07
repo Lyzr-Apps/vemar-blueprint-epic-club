@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign } from 'react-icons/fi'
 import { useState } from 'react'
@@ -47,8 +48,16 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-              <FiHome className="w-5 h-5 text-white" />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 p-0.5">
+              <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                <Image
+                  src="/vemar-logo.png"
+                  alt="VEMAR AI Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               VEMAR AI
