@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity } from 'react-icons/fi'
+import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity, FiCreditCard } from 'react-icons/fi'
+import { PaymentGateway } from '@/components/payment-gateway'
 
 // Request types
 type RequestCategory = 'SUPPORT' | 'TECHNICAL' | 'CREATIVE' | 'CONSULTING' | 'CONTENT' | 'MARKETING' | 'ANALYTICS' | 'GENERAL'
@@ -79,6 +80,7 @@ export default function ClientRequestManager() {
   const [requests, setRequests] = useState<ClientRequest[]>([])
   const [agentStats, setAgentStats] = useState<AgentStats[]>([])
   const [loading, setLoading] = useState(false)
+  const [selectedRequestForPayment, setSelectedRequestForPayment] = useState<ClientRequest | null>(null)
 
   // New request form state
   const [newRequest, setNewRequest] = useState({
@@ -277,10 +279,11 @@ export default function ClientRequestManager() {
 
         {/* Main Content */}
         <Tabs defaultValue="requests" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="requests">Client Requests</TabsTrigger>
             <TabsTrigger value="agents">Agent Dashboard</TabsTrigger>
             <TabsTrigger value="new">New Request</TabsTrigger>
+            <TabsTrigger value="payment">Payment</TabsTrigger>
           </TabsList>
 
           {/* Requests Tab */}
@@ -514,6 +517,133 @@ export default function ClientRequestManager() {
                 </form>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Payment Tab */}
+          <TabsContent value="payment" className="space-y-4">
+            {selectedRequestForPayment ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Request Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Request Details</CardTitle>
+                    <CardDescription>
+                      Payment for Request #{selectedRequestForPayment.id}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">{selectedRequestForPayment.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{selectedRequestForPayment.description}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                      <div>
+                        <p className="text-xs text-gray-500">Client</p>
+                        <p className="font-medium">{selectedRequestForPayment.clientName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Email</p>
+                        <p className="font-medium">{selectedRequestForPayment.clientEmail}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Category</p>
+                        <Badge variant="outline">{selectedRequestForPayment.category}</Badge>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Priority</p>
+                        <Badge className={getPriorityColor(selectedRequestForPayment.priority)}>
+                          {selectedRequestForPayment.priority}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedRequestForPayment(null)}
+                      className="w-full mt-4"
+                    >
+                      Select Different Request
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Payment Gateway */}
+                <PaymentGateway
+                  amount={99.99}
+                  requestId={selectedRequestForPayment.id}
+                  clientName={selectedRequestForPayment.clientName}
+                  clientEmail={selectedRequestForPayment.clientEmail}
+                  onSuccess={(data) => {
+                    console.log('Payment successful:', data)
+                    // Update request status or show success message
+                  }}
+                  onError={(error) => {
+                    console.error('Payment error:', error)
+                    // Show error message
+                  }}
+                />
+              </div>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FiCreditCard className="h-5 w-5" />
+                    Select a Request for Payment
+                  </CardTitle>
+                  <CardDescription>
+                    Choose a client request to process payment
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {requests.length === 0 ? (
+                      <div className="text-center py-12 text-gray-500">
+                        No requests available. Create a request first.
+                      </div>
+                    ) : (
+                      requests.map((request) => (
+                        <Card
+                          key={request.id}
+                          className="hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => setSelectedRequestForPayment(request)}
+                        >
+                          <CardContent className="pt-6">
+                            <div className="flex items-start justify-between">
+                              <div className="space-y-2 flex-1">
+                                <div className="flex items-center gap-3">
+                                  <h3 className="font-semibold">{request.title}</h3>
+                                  <Badge className={getPriorityColor(request.priority)}>
+                                    {request.priority}
+                                  </Badge>
+                                </div>
+
+                                <p className="text-sm text-gray-600">{request.description}</p>
+
+                                <div className="flex items-center gap-4 text-sm text-gray-500">
+                                  <div className="flex items-center gap-2">
+                                    <FiUser className="h-4 w-4" />
+                                    <span>{request.clientName}</span>
+                                  </div>
+                                  <Badge variant="outline" className="bg-blue-50">
+                                    {request.assignedAgent}
+                                  </Badge>
+                                </div>
+                              </div>
+
+                              <Button size="sm" className="gap-2">
+                                <FiCreditCard className="h-4 w-4" />
+                                Pay Now
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
 
