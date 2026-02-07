@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { withApiSecurity } from '@/lib/apiSecurity'
 
 // GET single request
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Apply API security
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['read:requests'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const requestData = await prisma.request.findUnique({
       where: { id: params.id },
@@ -56,6 +67,16 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Apply API security
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['write:requests'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const body = await request.json()
     const {
@@ -109,6 +130,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Apply API security
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['write:requests'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     await prisma.request.delete({
       where: { id: params.id },

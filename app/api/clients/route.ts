@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { withApiSecurity } from '@/lib/apiSecurity'
 
 // GET all clients
 export async function GET(request: NextRequest) {
+  // Apply API security
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['read:clients'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
@@ -51,6 +62,16 @@ export async function GET(request: NextRequest) {
 
 // POST create new client
 export async function POST(request: NextRequest) {
+  // Apply API security
+  const securityError = await withApiSecurity(request, {
+    requireAuth: true,
+    requiredPermissions: ['write:clients'],
+  })
+
+  if (securityError) {
+    return securityError
+  }
+
   try {
     const body = await request.json()
     const { name, email, company, phone, priority } = body

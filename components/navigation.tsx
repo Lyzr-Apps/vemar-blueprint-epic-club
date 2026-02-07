@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -39,6 +39,12 @@ export function Navigation() {
       href: '/pricing',
       icon: FiDollarSign,
       description: 'View pricing plans',
+    },
+    {
+      name: 'API Security',
+      href: '/api-security',
+      icon: FiShield,
+      description: 'Manage API keys',
     },
   ]
 
