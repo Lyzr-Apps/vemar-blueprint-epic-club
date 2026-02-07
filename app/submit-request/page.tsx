@@ -1,13 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FiSend, FiUser, FiMail, FiBuilding, FiFileText, FiClock, FiAlertCircle } from 'react-icons/fi'
+import { FiSend, FiUser, FiMail, FiBuilding, FiFileText, FiClock, FiAlertCircle, FiCheck, FiX, FiMessageSquare } from 'react-icons/fi'
 
 interface Client {
   id: string
   name: string
   email: string
   company?: string
+}
+
+interface NotificationResults {
+  email: boolean
+  sms: boolean
+  whatsapp: boolean
 }
 
 export default function SubmitRequestPage() {
@@ -32,6 +38,7 @@ export default function SubmitRequestPage() {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [notificationResults, setNotificationResults] = useState<NotificationResults | null>(null)
 
   useEffect(() => {
     fetchClients()
@@ -94,6 +101,7 @@ export default function SubmitRequestPage() {
       }
 
       setSuccess(true)
+      setNotificationResults(requestResponseData.notifications || null)
       // Reset form
       setRequestData({
         title: '',
@@ -130,11 +138,68 @@ export default function SubmitRequestPage() {
         </div>
 
         {success && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-6 space-y-4">
             <div className="flex items-center gap-2 text-green-800">
-              <FiAlertCircle className="w-5 h-5" />
-              <p className="font-medium">Request submitted successfully! Our agents will get back to you shortly.</p>
+              <FiCheck className="w-5 h-5" />
+              <p className="font-semibold">Request submitted successfully!</p>
             </div>
+
+            {notificationResults && (
+              <div className="border-t border-green-200 pt-4">
+                <p className="text-sm font-medium text-green-900 mb-3">Notification Status:</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {/* Email Notification */}
+                  <div className={`p-3 rounded-lg border ${notificationResults.email ? 'bg-white border-green-300' : 'bg-gray-50 border-gray-300'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {notificationResults.email ? (
+                        <FiCheck className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <FiX className="w-4 h-4 text-gray-400" />
+                      )}
+                      <FiMail className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900">Email</span>
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      {notificationResults.email ? 'Sent successfully' : 'Not sent'}
+                    </p>
+                  </div>
+
+                  {/* SMS Notification */}
+                  <div className={`p-3 rounded-lg border ${notificationResults.sms ? 'bg-white border-green-300' : 'bg-gray-50 border-gray-300'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {notificationResults.sms ? (
+                        <FiCheck className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <FiX className="w-4 h-4 text-gray-400" />
+                      )}
+                      <FiMessageSquare className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900">SMS</span>
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      {notificationResults.sms ? 'Sent successfully' : 'No phone provided'}
+                    </p>
+                  </div>
+
+                  {/* WhatsApp Notification */}
+                  <div className={`p-3 rounded-lg border ${notificationResults.whatsapp ? 'bg-white border-green-300' : 'bg-gray-50 border-gray-300'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {notificationResults.whatsapp ? (
+                        <FiCheck className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <FiX className="w-4 h-4 text-gray-400" />
+                      )}
+                      <FiMessageSquare className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900">WhatsApp</span>
+                    </div>
+                    <p className="text-xs text-gray-600">
+                      {notificationResults.whatsapp ? 'Sent successfully' : 'No phone provided'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm text-green-700">Our agents will get back to you shortly!</p>
           </div>
         )}
 
@@ -377,7 +442,7 @@ export default function SubmitRequestPage() {
           <h4 className="font-semibold text-blue-900 mb-2">What happens next?</h4>
           <ul className="space-y-1 text-sm text-blue-800">
             <li>• Your request will be automatically assigned to the most suitable agent based on the category</li>
-            <li>• You'll receive a confirmation message and updates as your request is processed</li>
+            <li>• You'll receive confirmations via Email, SMS, and WhatsApp (if phone number provided)</li>
             <li>• Our agents will prioritize your request based on the priority level you selected</li>
             <li>• You can track the progress of your request in the dashboard</li>
           </ul>
