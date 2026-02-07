@@ -141,6 +141,9 @@ export default function PricingPage() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Discover how VEMAR AI transforms client request management with intelligent routing and specialized agents
             </p>
+            <p className="text-sm font-semibold text-blue-600 mt-2">
+              Founded: May 2025
+            </p>
           </div>
 
           {/* Video Player */}
@@ -167,28 +170,28 @@ export default function PricingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent" />
               </div>
 
-              {/* Video stats */}
+              {/* Investor Metrics */}
               <div className="grid grid-cols-3 divide-x divide-slate-200 bg-white">
                 <div className="p-4 text-center">
                   <div className="flex items-center justify-center gap-2 text-blue-600 mb-1">
                     <FiZap className="w-4 h-4" />
-                    <p className="font-bold text-lg">2:30</p>
+                    <p className="font-bold text-lg">85%</p>
                   </div>
-                  <p className="text-xs text-gray-500">Duration</p>
+                  <p className="text-xs text-gray-500">Cost Reduction</p>
                 </div>
                 <div className="p-4 text-center">
                   <div className="flex items-center justify-center gap-2 text-purple-600 mb-1">
                     <FiCpu className="w-4 h-4" />
-                    <p className="font-bold text-lg">8 Agents</p>
+                    <p className="font-bold text-lg">10x</p>
                   </div>
-                  <p className="text-xs text-gray-500">Demonstrated</p>
+                  <p className="text-xs text-gray-500">Faster Response</p>
                 </div>
                 <div className="p-4 text-center">
                   <div className="flex items-center justify-center gap-2 text-green-600 mb-1">
                     <FiTrendingUp className="w-4 h-4" />
-                    <p className="font-bold text-lg">100%</p>
+                    <p className="font-bold text-lg">99.9%</p>
                   </div>
-                  <p className="text-xs text-gray-500">Automated</p>
+                  <p className="text-xs text-gray-500">Accuracy Rate</p>
                 </div>
               </div>
             </CardContent>
