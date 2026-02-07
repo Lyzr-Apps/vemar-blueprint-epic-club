@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity, FiCreditCard } from 'react-icons/fi'
+import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity, FiCreditCard, FiShield } from 'react-icons/fi'
 import { PaymentGateway } from '@/components/payment-gateway'
 
 // Request types
@@ -229,6 +230,29 @@ export default function ClientRequestManager() {
             Intelligent request routing powered by specialized AI agents
           </p>
         </div>
+
+        {/* IP Protection Alert */}
+        <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-start gap-3 flex-1">
+                <FiShield className="h-6 w-6 text-blue-600 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-blue-900 text-lg">Protect Your Intellectual Property</h3>
+                  <p className="text-sm text-blue-800 mt-1">
+                    Register your work with cryptographic timestamp proofs and digital watermarks. Create legally admissible proof of ownership.
+                  </p>
+                </div>
+              </div>
+              <Link href="/protect">
+                <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+                  <FiShield className="h-4 w-4" />
+                  Access Protection Suite
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
