@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendAllNotifications } from '@/lib/notifications'
 
 // GET all requests
 export async function GET(request: NextRequest) {
@@ -132,9 +133,24 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Send notifications (Email, SMS, WhatsApp)
+    const notificationResults = await sendAllNotifications({
+      clientName: client.name,
+      clientEmail: client.email,
+      clientPhone: client.phone || undefined,
+      requestId: newRequest.id,
+      requestTitle: title,
+      category,
+      assignedAgent: agentAssignment,
+      priority: priority || 'MEDIUM',
+    })
+
+    console.log('Notifications sent:', notificationResults)
+
     return NextResponse.json({
       success: true,
       request: newRequest,
+      notifications: notificationResults,
     })
   } catch (error) {
     console.error('Error creating request:', error)
