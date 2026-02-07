@@ -2,11 +2,544 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=standalone.html">
-    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architect - AI-Powered Development Platform by Lyzr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #667eea;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #667eea }
+        }
+    </style>
 </head>
-<body>
-    <p>Redirecting to Multi-Agent Client Request Manager...</p>
-    <p>If you are not redirected automatically, <a href="standalone.html">click here</a>.</p>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Navigation Component
+        function Navigation() {
+            const [isScrolled, setIsScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    setIsScrolled(window.scrollY > 50);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            return (
+                <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            <div className="flex items-center space-x-2">
+                                <i className="fas fa-robot text-3xl text-purple-600"></i>
+                                <span className="text-2xl font-bold gradient-text">Architect</span>
+                            </div>
+
+                            <div className="hidden md:flex items-center space-x-8">
+                                <a href="#features" className="text-gray-700 hover:text-purple-600 transition-colors">Features</a>
+                                <a href="#solutions" className="text-gray-700 hover:text-purple-600 transition-colors">Solutions</a>
+                                <a href="#pricing" className="text-gray-700 hover:text-purple-600 transition-colors">Pricing</a>
+                                <a href="#community" className="text-gray-700 hover:text-purple-600 transition-colors">Community</a>
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                <button className="px-6 py-2 text-purple-600 hover:text-purple-700 font-medium transition-colors">
+                                    Learn More
+                                </button>
+                                <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all">
+                                    Get Started
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        // Hero Section Component
+        function HeroSection() {
+            const [greeting, setGreeting] = useState("Let's build something");
+            const [placeholder, setPlaceholder] = useState("Describe your app idea...");
+
+            const greetings = [
+                "Let's build something",
+                "Ready to build?",
+                "What should we build?",
+                "What's on your mind?",
+                "Got an idea?"
+            ];
+
+            const placeholders = [
+                "a landing page for my SaaS startup...",
+                "a blog about technology and innovation...",
+                "a web app that connects developers...",
+                "a prototype for my mobile idea...",
+                "an internal tool for team collaboration...",
+                "a dashboard to track metrics..."
+            ];
+
+            useEffect(() => {
+                const greetingInterval = setInterval(() => {
+                    setGreeting(greetings[Math.floor(Math.random() * greetings.length)]);
+                }, 3000);
+
+                const placeholderInterval = setInterval(() => {
+                    setPlaceholder(placeholders[Math.floor(Math.random() * placeholders.length)]);
+                }, 4000);
+
+                return () => {
+                    clearInterval(greetingInterval);
+                    clearInterval(placeholderInterval);
+                };
+            }, []);
+
+            return (
+                <div className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                    <div className="absolute inset-0 hero-gradient opacity-10"></div>
+
+                    <div className="max-w-4xl mx-auto text-center relative z-10">
+                        <div className="mb-8 float-animation">
+                            <i className="fas fa-magic text-6xl text-purple-600"></i>
+                        </div>
+
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                            <span className="gradient-text">{greeting}</span>
+                        </h1>
+
+                        <p className="text-xl md:text-2xl text-gray-600 mb-8">
+                            Your superhuman full stack AI engineer
+                        </p>
+
+                        <p className="text-lg text-gray-500 mb-12">
+                            Chat with AI to build web apps. Sync with GitHub. One-click deploy.
+                        </p>
+
+                        <div className="max-w-3xl mx-auto mb-8">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder={placeholder}
+                                    className="w-full px-6 py-4 text-lg border-2 border-purple-200 rounded-xl focus:outline-none focus:border-purple-500 transition-colors"
+                                />
+                                <button className="absolute right-2 top-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all">
+                                    <i className="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-500">
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Internal Tools</span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Website</span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Consumer App</span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">B2B App</span>
+                            <span className="px-4 py-2 bg-white rounded-full shadow-sm">Prototype</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Features Section Component
+        function FeaturesSection() {
+            const features = [
+                {
+                    icon: 'fa-comments',
+                    title: 'AI-Powered Chat Interface',
+                    description: 'Chat naturally with AI to build, edit, and refine your applications in real-time.',
+                    color: 'text-blue-600'
+                },
+                {
+                    icon: 'fa-code-branch',
+                    title: 'GitHub Integration',
+                    description: 'Two-way sync with your repositories. Switch branches and manage code seamlessly.',
+                    color: 'text-green-600'
+                },
+                {
+                    icon: 'fa-database',
+                    title: 'Supabase Backend',
+                    description: 'Built-in user authentication, data storage, and edge functions deployment.',
+                    color: 'text-purple-600'
+                },
+                {
+                    icon: 'fa-rocket',
+                    title: 'One-Click Deploy',
+                    description: 'Deploy your applications instantly with custom domains and analytics integration.',
+                    color: 'text-orange-600'
+                },
+                {
+                    icon: 'fa-users',
+                    title: 'Team Collaboration',
+                    description: 'Work together with role-based access control and workspace management.',
+                    color: 'text-pink-600'
+                },
+                {
+                    icon: 'fa-puzzle-piece',
+                    title: 'MCP Integration',
+                    description: 'Connect custom tools and remote servers with Model Context Protocol support.',
+                    color: 'text-indigo-600'
+                }
+            ];
+
+            return (
+                <div id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-bold mb-4">
+                                <span className="gradient-text">Powerful Features</span>
+                            </h2>
+                            <p className="text-xl text-gray-600">Everything you need to build modern web applications</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {features.map((feature, index) => (
+                                <div key={index} className="p-6 bg-gray-50 rounded-xl card-hover">
+                                    <i className={`fas ${feature.icon} text-4xl ${feature.color} mb-4`}></i>
+                                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                                    <p className="text-gray-600">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Solutions Section Component
+        function SolutionsSection() {
+            const solutions = [
+                { icon: 'fa-lightbulb', title: 'Founders', description: 'Build MVPs and validate ideas faster' },
+                { icon: 'fa-chart-line', title: 'Product Managers', description: 'Create prototypes and demos instantly' },
+                { icon: 'fa-palette', title: 'Designers', description: 'Turn designs into functional apps' },
+                { icon: 'fa-bullhorn', title: 'Marketers', description: 'Build landing pages and campaigns' },
+                { icon: 'fa-handshake', title: 'Sales', description: 'Create custom demos and tools' },
+                { icon: 'fa-flask', title: 'Prototyping', description: 'Rapid experimentation and iteration' }
+            ];
+
+            return (
+                <div id="solutions" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-bold mb-4">
+                                <span className="gradient-text">Built for Everyone</span>
+                            </h2>
+                            <p className="text-xl text-gray-600">Whether you're a founder, designer, or marketer</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {solutions.map((solution, index) => (
+                                <div key={index} className="p-6 bg-white rounded-xl shadow-sm card-hover">
+                                    <i className={`fas ${solution.icon} text-3xl text-purple-600 mb-3`}></i>
+                                    <h3 className="text-lg font-bold mb-2">{solution.title}</h3>
+                                    <p className="text-gray-600 text-sm">{solution.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Pricing Section Component
+        function PricingSection() {
+            const plans = [
+                {
+                    name: 'Free',
+                    price: '$0',
+                    period: 'forever',
+                    features: [
+                        '5 daily credits',
+                        'Up to 30 credits/month',
+                        'Public projects',
+                        'Community support',
+                        'Basic integrations'
+                    ],
+                    cta: 'Start Free',
+                    highlighted: false
+                },
+                {
+                    name: 'Pro',
+                    price: '$20',
+                    period: 'per month',
+                    features: [
+                        '100+ credits per month',
+                        'Remove Architect badge',
+                        'Custom domains',
+                        'Private projects',
+                        'Priority support',
+                        'Advanced integrations',
+                        'Team collaboration'
+                    ],
+                    cta: 'Start Pro Trial',
+                    highlighted: true
+                },
+                {
+                    name: 'Enterprise',
+                    price: 'Custom',
+                    period: 'contact us',
+                    features: [
+                        'Unlimited credits',
+                        'Dedicated support',
+                        'Custom integrations',
+                        'SSO authentication',
+                        'Opt-out data training',
+                        'SLA guarantees',
+                        'Custom contracts'
+                    ],
+                    cta: 'Contact Sales',
+                    highlighted: false
+                }
+            ];
+
+            return (
+                <div id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-bold mb-4">
+                                <span className="gradient-text">Simple, Transparent Pricing</span>
+                            </h2>
+                            <p className="text-xl text-gray-600">Choose the plan that fits your needs</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {plans.map((plan, index) => (
+                                <div key={index} className={`p-8 rounded-2xl ${plan.highlighted ? 'bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl transform scale-105' : 'bg-gray-50'}`}>
+                                    <h3 className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                                        {plan.name}
+                                    </h3>
+                                    <div className="mb-6">
+                                        <span className={`text-4xl font-bold ${plan.highlighted ? 'text-white' : 'text-gray-900'}`}>
+                                            {plan.price}
+                                        </span>
+                                        <span className={`text-sm ${plan.highlighted ? 'text-purple-100' : 'text-gray-500'}`}>
+                                            /{plan.period}
+                                        </span>
+                                    </div>
+                                    <ul className="space-y-3 mb-8">
+                                        {plan.features.map((feature, i) => (
+                                            <li key={i} className="flex items-center">
+                                                <i className={`fas fa-check mr-2 ${plan.highlighted ? 'text-purple-200' : 'text-purple-600'}`}></i>
+                                                <span className={plan.highlighted ? 'text-purple-50' : 'text-gray-600'}>
+                                                    {feature}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <button className={`w-full py-3 rounded-lg font-medium transition-all ${plan.highlighted ? 'bg-white text-purple-600 hover:shadow-lg' : 'bg-purple-600 text-white hover:bg-purple-700'}`}>
+                                        {plan.cta}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Stats Section Component
+        function StatsSection() {
+            const stats = [
+                { value: '50K+', label: 'Developers' },
+                { value: '100K+', label: 'Apps Built' },
+                { value: '1M+', label: 'Deployments' },
+                { value: '99.9%', label: 'Uptime' }
+            ];
+
+            return (
+                <div className="py-20 px-4 sm:px-6 lg:px-8 hero-gradient">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                            {stats.map((stat, index) => (
+                                <div key={index} className="text-center">
+                                    <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                                        {stat.value}
+                                    </div>
+                                    <div className="text-purple-200 text-lg">
+                                        {stat.label}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Community Section Component
+        function CommunitySection() {
+            return (
+                <div id="community" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+                    <div className="max-w-7xl mx-auto text-center">
+                        <h2 className="text-4xl font-bold mb-4">
+                            <span className="gradient-text">Join Our Community</span>
+                        </h2>
+                        <p className="text-xl text-gray-600 mb-12">Connect with thousands of developers building the future</p>
+
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
+                                <i className="fab fa-discord text-indigo-600 text-xl"></i>
+                                <span className="font-medium">Discord</span>
+                            </a>
+                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
+                                <i className="fab fa-github text-gray-900 text-xl"></i>
+                                <span className="font-medium">GitHub</span>
+                            </a>
+                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
+                                <i className="fab fa-twitter text-blue-400 text-xl"></i>
+                                <span className="font-medium">Twitter</span>
+                            </a>
+                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
+                                <i className="fab fa-youtube text-red-600 text-xl"></i>
+                                <span className="font-medium">YouTube</span>
+                            </a>
+                            <a href="#" className="px-8 py-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2">
+                                <i className="fab fa-linkedin text-blue-700 text-xl"></i>
+                                <span className="font-medium">LinkedIn</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Footer Component
+        function Footer() {
+            return (
+                <footer className="bg-gray-900 text-gray-300 py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                            <div>
+                                <h3 className="text-white font-bold mb-4">Product</h3>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Solutions</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">Community</h3>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="hover:text-white transition-colors">Expert Program</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Hire Experts</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Affiliates</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Discord</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">GitHub</a></li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">Resources</h3>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="hover:text-white transition-colors">Learn</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Templates</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Guides</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-white font-bold mb-4">Company</h3>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Enterprise</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Press</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+                                <i className="fas fa-robot text-2xl text-purple-500"></i>
+                                <span className="text-xl font-bold text-white">Architect</span>
+                            </div>
+
+                            <div className="text-center md:text-right">
+                                <p className="text-sm">Built by the awesome team at Lyzr</p>
+                                <p className="text-xs text-gray-500 mt-1">© 2024 All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            return (
+                <div className="min-h-screen">
+                    <Navigation />
+                    <HeroSection />
+                    <FeaturesSection />
+                    <SolutionsSection />
+                    <StatsSection />
+                    <PricingSection />
+                    <CommunitySection />
+                    <Footer />
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
