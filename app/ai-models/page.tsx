@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { FiMic, FiType, FiPlay, FiLoader, FiVolume2, FiCpu, FiZap, FiCheckCircle, FiClock } from 'react-icons/fi'
+import { ChatWidget } from '@/components/chat-widget'
 
 type TTSVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 type TextTask = 'summarize' | 'translate' | 'paraphrase' | 'complete' | 'analyze' | 'extract'
@@ -97,6 +98,9 @@ export default function AIModelsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Chat Widget */}
+      <ChatWidget position="top-right" />
+
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 border-b border-blue-800">
         <div className="max-w-7xl mx-auto px-6 py-16">
