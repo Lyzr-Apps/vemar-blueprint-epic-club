@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp, FiAlertTriangle, FiPlay, FiCpu, FiSearch } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp, FiAlertTriangle, FiPlay, FiCpu, FiSearch, FiMessageSquare, FiHelpCircle } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -70,6 +70,24 @@ export function Navigation() {
       href: '/investor-pitch',
       icon: FiTrendingUp,
       description: 'India market opportunity',
+    },
+    {
+      name: 'User Flow',
+      href: '/user-flow',
+      icon: FiUsers,
+      description: 'User journeys & flows',
+    },
+    {
+      name: 'FAQ',
+      href: '/faq',
+      icon: FiHelpCircle,
+      description: 'Frequently asked questions',
+    },
+    {
+      name: 'Feedback',
+      href: '/feedback',
+      icon: FiMessageSquare,
+      description: 'Share your feedback',
     },
   ]
 
