@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FiSend, FiUser, FiMail, FiBuilding, FiFileText, FiClock, FiAlertCircle, FiCheck, FiX, FiMessageCircle, FiSmartphone } from 'react-icons/fi'
+import { FiSend, FiUser, FiMail, FiBriefcase, FiFileText, FiClock, FiAlertCircle, FiCheck, FiX, FiMessageCircle, FiSmartphone } from 'react-icons/fi'
 
 interface Client {
   id: string
@@ -290,7 +290,7 @@ export default function SubmitRequestPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Company (Optional)</label>
                   <div className="relative">
-                    <FiBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <FiBriefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       value={newClient.company}

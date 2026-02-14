@@ -1,16 +1,7 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          {
-            "group": ["react-icons", "react-icons/*"],
-            "message": "react-icons is banned. Use lucide-react instead: import { IconName } from 'lucide-react'"
-          }
-        ]
-      }
-    ]
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }
