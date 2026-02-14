@@ -93,6 +93,231 @@ export default function InvestorPitchPage() {
           </div>
         </div>
 
+        {/* User Flow Demo */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-gradient-to-r from-green-500 to-teal-500 text-white px-6 py-2 rounded-full font-bold mb-4">
+              LIVE DEMO
+            </div>
+            <h2 className="text-5xl font-black text-gray-900 mb-4 bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+              How It Works
+            </h2>
+            <p className="text-2xl text-gray-700 max-w-3xl mx-auto font-semibold">
+              See VEMAR AI in action - From client request to resolution in minutes
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 transform -translate-x-1/2 hidden md:block" />
+
+            {/* Step 1 */}
+            <div className="mb-12 md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="md:text-right mb-6 md:mb-0">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4 md:justify-end">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-blue-900 font-black text-xl shadow-lg">
+                        1
+                      </div>
+                      <h3 className="text-2xl font-black">Client Submits Request</h3>
+                    </div>
+                    <p className="text-blue-50 font-semibold text-lg">
+                      Customer fills out a simple form or sends an email requesting a service (e.g., "I need help with my tax filing")
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">Example Input:</p>
+                      <p className="text-blue-100 italic">"Need tax consultation for FY 2024-25. Turnover 50L. GST registered."</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden md:block" />
+            </div>
+
+            {/* Step 2 */}
+            <div className="mb-12 md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="hidden md:block" />
+              <div className="md:text-left mb-6 md:mb-0">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-purple-900 font-black text-xl shadow-lg">
+                        2
+                      </div>
+                      <h3 className="text-2xl font-black">AI Analyzes & Categorizes</h3>
+                    </div>
+                    <p className="text-purple-50 font-semibold text-lg">
+                      Our AI agent instantly reads the request, extracts key information, and categorizes it (Tax Services, Urgent Priority)
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">AI Processing:</p>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-purple-100">Category: Tax Consultation</p>
+                        <p className="text-purple-100">Priority: High (deadline sensitive)</p>
+                        <p className="text-purple-100">Department: Tax Services</p>
+                        <p className="text-purple-100">Estimated Time: 2-3 hours</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="mb-12 md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="md:text-right mb-6 md:mb-0">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-pink-500 to-pink-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4 md:justify-end">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-pink-900 font-black text-xl shadow-lg">
+                        3
+                      </div>
+                      <h3 className="text-2xl font-black">Smart Assignment</h3>
+                    </div>
+                    <p className="text-pink-50 font-semibold text-lg">
+                      AI routes to the best available expert based on specialization, workload, and past performance
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">Assignment Logic:</p>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-pink-100">Expert: CA Priya Sharma</p>
+                        <p className="text-pink-100">Match Score: 95%</p>
+                        <p className="text-pink-100">Availability: Now</p>
+                        <p className="text-pink-100">Avg Rating: 4.8/5</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden md:block" />
+            </div>
+
+            {/* Step 4 */}
+            <div className="mb-12 md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="hidden md:block" />
+              <div className="md:text-left mb-6 md:mb-0">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-orange-900 font-black text-xl shadow-lg">
+                        4
+                      </div>
+                      <h3 className="text-2xl font-black">Automated Notifications</h3>
+                    </div>
+                    <p className="text-orange-50 font-semibold text-lg">
+                      Both client and expert receive instant notifications via email, SMS, and WhatsApp with all details
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">Notifications Sent:</p>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-orange-100">Client: "Request received, Expert assigned"</p>
+                        <p className="text-orange-100">Expert: "New urgent tax case assigned"</p>
+                        <p className="text-orange-100">Manager: "High priority task in progress"</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="mb-12 md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="md:text-right mb-6 md:mb-0">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4 md:justify-end">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-teal-900 font-black text-xl shadow-lg">
+                        5
+                      </div>
+                      <h3 className="text-2xl font-black">Real-Time Tracking</h3>
+                    </div>
+                    <p className="text-teal-50 font-semibold text-lg">
+                      Client tracks progress in real-time through a beautiful dashboard showing every update
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">Live Status:</p>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-400 rounded-full" />
+                          <p className="text-teal-100">Documents collected</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                          <p className="text-teal-100">Analysis in progress</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                          <p className="text-teal-100">Final review pending</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden md:block" />
+            </div>
+
+            {/* Step 6 */}
+            <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
+              <div className="hidden md:block" />
+              <div className="md:text-left">
+                <div className="inline-block md:block">
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-8 shadow-2xl transform hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-yellow-400 rounded-full w-12 h-12 flex items-center justify-center text-green-900 font-black text-xl shadow-lg">
+                        6
+                      </div>
+                      <h3 className="text-2xl font-black">Automated Follow-Up</h3>
+                    </div>
+                    <p className="text-green-50 font-semibold text-lg">
+                      After completion, AI sends satisfaction survey, requests feedback, and schedules next steps automatically
+                    </p>
+                    <div className="mt-4 bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                      <p className="font-black text-sm mb-2">Post-Completion:</p>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-green-100">Invoice generated & sent</p>
+                        <p className="text-green-100">Payment link shared</p>
+                        <p className="text-green-100">Feedback request sent</p>
+                        <p className="text-green-100">Follow-up scheduled (30 days)</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Results Banner */}
+          <div className="mt-16 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white rounded-2xl p-8 shadow-2xl">
+            <div className="text-center">
+              <h3 className="text-3xl font-black mb-6">End Result</h3>
+              <div className="grid md:grid-cols-4 gap-6">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6">
+                  <div className="text-5xl font-black mb-2">2 hrs</div>
+                  <p className="text-purple-100 font-semibold">Total Time</p>
+                  <p className="text-xs text-purple-200 mt-1">(vs 3 days before)</p>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6">
+                  <div className="text-5xl font-black mb-2">0</div>
+                  <p className="text-purple-100 font-semibold">Manual Steps</p>
+                  <p className="text-xs text-purple-200 mt-1">(fully automated)</p>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6">
+                  <div className="text-5xl font-black mb-2">5/5</div>
+                  <p className="text-purple-100 font-semibold">Client Rating</p>
+                  <p className="text-xs text-purple-200 mt-1">(happy customer)</p>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6">
+                  <div className="text-5xl font-black mb-2">80%</div>
+                  <p className="text-purple-100 font-semibold">Cost Saved</p>
+                  <p className="text-xs text-purple-200 mt-1">(vs manual process)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Solution */}
         <div className="mb-20">
           <div className="text-center mb-12">
