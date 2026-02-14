@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { FiUsers, FiFileText, FiClock, FiCheckCircle, FiAlertCircle, FiFilter } from 'react-icons/fi'
 
 interface Client {
@@ -43,11 +43,7 @@ export default function DashboardPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
 
-  useEffect(() => {
-    fetchData()
-  }, [statusFilter, categoryFilter])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       // Fetch clients
@@ -72,7 +68,11 @@ export default function DashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [statusFilter, categoryFilter])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {

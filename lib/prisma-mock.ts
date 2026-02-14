@@ -2,17 +2,17 @@
 // This provides a fallback when @prisma/client is not available
 
 type MockModel = {
-  findMany: () => Promise<any[]>
+  findMany: (args?: any) => Promise<any[]>
   findUnique: (args: any) => Promise<any | null>
   findFirst: (args: any) => Promise<any | null>
   create: (args: any) => Promise<any>
   update: (args: any) => Promise<any>
   delete: (args: any) => Promise<any>
-  count: () => Promise<number>
+  count: (args?: any) => Promise<number>
 }
 
 const createMockModel = (modelName: string): MockModel => ({
-  findMany: async () => {
+  findMany: async (args?: any) => {
     console.warn(`Mock Prisma: ${modelName}.findMany() called - returning empty array`)
     return []
   },
@@ -47,7 +47,7 @@ const createMockModel = (modelName: string): MockModel => ({
       id: args.where.id || 'mock-id',
     }
   },
-  count: async () => {
+  count: async (args?: any) => {
     console.warn(`Mock Prisma: ${modelName}.count() called - returning 0`)
     return 0
   },
