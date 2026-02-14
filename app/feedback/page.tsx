@@ -162,6 +162,13 @@ export default function FeedbackPage() {
                     </a>
                   </div>
                 </div>
+                <div className="flex items-center gap-3">
+                  <FiMessageSquare className="w-5 h-5 text-pink-600" />
+                  <div>
+                    <p className="font-bold text-gray-900">Live Chat</p>
+                    <p className="text-pink-600">Available 24/7 on our website</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
