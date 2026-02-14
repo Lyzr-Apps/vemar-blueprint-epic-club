@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity, FiCreditCard, FiShield } from 'react-icons/fi'
+import { FiSend, FiUser, FiClock, FiCheckCircle, FiAlertCircle, FiTrendingUp, FiUsers, FiActivity, FiCreditCard, FiShield, FiDatabase, FiSettings } from 'react-icons/fi'
 import { PaymentGateway } from '@/components/payment-gateway'
 
 // Request types
@@ -253,6 +253,47 @@ export default function ClientRequestManager() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Management Tools */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link href="/agents">
+            <Card className="hover:shadow-lg transition-all cursor-pointer border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <FiUsers className="h-6 w-6 text-purple-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-purple-900 text-lg">Agent Management</h3>
+                      <p className="text-sm text-purple-800 mt-1">
+                        Create, configure, and manage AI agents with knowledge base integration and custom settings.
+                      </p>
+                    </div>
+                  </div>
+                  <FiSettings className="h-5 w-5 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/knowledge-base">
+            <Card className="hover:shadow-lg transition-all cursor-pointer border-green-200 bg-gradient-to-br from-green-50 to-teal-50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <FiDatabase className="h-6 w-6 text-green-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-green-900 text-lg">Knowledge Base Management</h3>
+                      <p className="text-sm text-green-800 mt-1">
+                        Manage RAG knowledge bases, upload documents, and organize information for your AI agents.
+                      </p>
+                    </div>
+                  </div>
+                  <FiDatabase className="h-5 w-5 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
