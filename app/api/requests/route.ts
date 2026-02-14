@@ -1,20 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendAllNotifications } from '@/lib/notifications'
-import { withApiSecurity } from '@/lib/apiSecurity'
 
 // GET all requests
 export async function GET(request: NextRequest) {
-  // Apply API security
-  const securityError = await withApiSecurity(request, {
-    requireAuth: true,
-    requiredPermissions: ['read:requests'],
-  })
-
-  if (securityError) {
-    return securityError
-  }
-
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
@@ -77,16 +66,6 @@ export async function GET(request: NextRequest) {
 
 // POST create new request
 export async function POST(request: NextRequest) {
-  // Apply API security
-  const securityError = await withApiSecurity(request, {
-    requireAuth: true,
-    requiredPermissions: ['write:requests'],
-  })
-
-  if (securityError) {
-    return securityError
-  }
-
   try {
     const body = await request.json()
     const {
