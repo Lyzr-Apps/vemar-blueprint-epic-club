@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp, FiAlertTriangle } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp, FiAlertTriangle, FiPlay } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -15,6 +15,12 @@ export function Navigation() {
       name: 'Home',
       href: '/',
       icon: FiHome,
+    },
+    {
+      name: 'Demo',
+      href: '/demo',
+      icon: FiPlay,
+      description: 'Product demonstration',
     },
     {
       name: 'Dashboard',
