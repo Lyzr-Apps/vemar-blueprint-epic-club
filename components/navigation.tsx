@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -45,6 +45,12 @@ export function Navigation() {
       href: '/api-security',
       icon: FiShield,
       description: 'Manage API keys',
+    },
+    {
+      name: 'Investor Pitch',
+      href: '/investor-pitch',
+      icon: FiTrendingUp,
+      description: 'India market opportunity',
     },
   ]
 
