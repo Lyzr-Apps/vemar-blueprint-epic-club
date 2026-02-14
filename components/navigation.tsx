@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp } from 'react-icons/fi'
+import { FiHome, FiUsers, FiSend, FiBarChart2, FiMenu, FiX, FiDollarSign, FiShield, FiTrendingUp, FiAlertTriangle } from 'react-icons/fi'
 import { useState } from 'react'
 
 export function Navigation() {
@@ -33,6 +33,12 @@ export function Navigation() {
       href: '/analytics',
       icon: FiBarChart2,
       description: 'View performance metrics',
+    },
+    {
+      name: 'Deepfake Detection',
+      href: '/deepfake-detection',
+      icon: FiAlertTriangle,
+      description: 'BFSI fraud prevention',
     },
     {
       name: 'Pricing',
