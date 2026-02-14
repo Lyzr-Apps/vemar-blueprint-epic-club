@@ -73,7 +73,7 @@ export function Navigation() {
   ]
 
   return (
-    <nav className="bg-slate-900 border-b border-slate-800">
+    <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -95,7 +95,7 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1 mx-4">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href
@@ -104,7 +104,7 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all whitespace-nowrap ${
                     isActive
                       ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
