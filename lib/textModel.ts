@@ -163,7 +163,7 @@ export class TextModelService {
       ]
     } else if (extractionType === 'keywords') {
       const words = text.toLowerCase().split(/\s+/)
-      const uniqueWords = [...new Set(words)].filter(w => w.length > 4)
+      const uniqueWords = Array.from(new Set(words)).filter(w => w.length > 4)
       result.keywords = uniqueWords.slice(0, 10).map(w => ({
         text: w,
         relevance: Math.random() * 0.5 + 0.5,
