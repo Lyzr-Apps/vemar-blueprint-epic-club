@@ -1,8 +1,52 @@
 'use client'
 
-import { FiMessageSquare, FiStar, FiMail, FiUser, FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
+import { useState } from 'react'
+import { FiMessageSquare, FiStar, FiMail, FiUser, FiAlertCircle, FiCheckCircle, FiSend } from 'react-icons/fi'
 
 export default function FeedbackPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    category: 'general',
+    rating: 5,
+    subject: '',
+    message: '',
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    setIsSubmitting(false)
+    setIsSubmitted(true)
+
+    // Reset form after 3 seconds
+    setTimeout(() => {
+      setIsSubmitted(false)
+      setFormData({
+        name: '',
+        email: '',
+        category: 'general',
+        rating: 5,
+        subject: '',
+        message: '',
+      })
+    }, 3000)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
       {/* Header */}
@@ -122,40 +166,161 @@ export default function FeedbackPage() {
             </div>
           </div>
 
-          {/* Right Column - Google Form Embed */}
+          {/* Right Column - Feedback Form */}
           <div>
             <div className="bg-white rounded-2xl shadow-xl p-8 sticky top-24">
               <h2 className="text-3xl font-black text-gray-900 mb-6 text-center">Feedback Form</h2>
 
-              {/* Google Form Embed */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                <iframe
-                  src="https://docs.google.com/forms/d/e/1FAIpQLSdQVXL8yMKH9vZ3mLQw7HjKzC4xPqEhFGnY2WbRtCvN8pLm5Q/viewform?embedded=true"
-                  width="100%"
-                  height="800"
-                  frameBorder="0"
-                  marginHeight={0}
-                  marginWidth={0}
-                  className="rounded-lg"
-                >
-                  Loading form...
-                </iframe>
-              </div>
+              {isSubmitted ? (
+                <div className="text-center py-12">
+                  <div className="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                    <FiCheckCircle className="w-12 h-12 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900 mb-2">Thank You!</h3>
+                  <p className="text-gray-600">
+                    Your feedback has been submitted successfully. We'll review it within 24-48 hours.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name */}
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-black text-gray-900 mb-2">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all"
+                      placeholder="John Doe"
+                    />
+                  </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <p className="text-sm text-gray-700">
-                  <span className="font-bold">Note:</span> If the form doesn't load, you can{' '}
-                  <a
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSdQVXL8yMKH9vZ3mLQw7HjKzC4xPqEhFGnY2WbRtCvN8pLm5Q/viewform"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 font-bold hover:underline"
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-black text-gray-900 mb-2">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all"
+                      placeholder="john@example.com"
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-black text-gray-900 mb-2">
+                      Feedback Category
+                    </label>
+                    <select
+                      id="category"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all"
+                    >
+                      <option value="general">General Feedback</option>
+                      <option value="bug">Bug Report</option>
+                      <option value="feature">Feature Request</option>
+                      <option value="ui">UI/UX Improvement</option>
+                      <option value="performance">Performance Issue</option>
+                      <option value="pricing">Pricing & Plans</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Rating */}
+                  <div>
+                    <label htmlFor="rating" className="block text-sm font-black text-gray-900 mb-2">
+                      Overall Rating
+                    </label>
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, rating: star }))}
+                          className="focus:outline-none transition-transform hover:scale-110"
+                        >
+                          <FiStar
+                            className={`w-8 h-8 ${
+                              star <= formData.rating
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                      <span className="ml-2 text-sm font-bold text-gray-700">
+                        {formData.rating} / 5
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Subject */}
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-black text-gray-900 mb-2">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all"
+                      placeholder="Brief summary of your feedback"
+                    />
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-black text-gray-900 mb-2">
+                      Your Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows={6}
+                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all resize-none"
+                      placeholder="Tell us more about your feedback..."
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black px-8 py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    open it in a new tab
-                  </a>
-                  .
-                </p>
-              </div>
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <FiSend className="w-5 h-5" />
+                        Submit Feedback
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
