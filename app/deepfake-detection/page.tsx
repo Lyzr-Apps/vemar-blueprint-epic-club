@@ -86,6 +86,39 @@ export default function DeepfakeDetectionPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* About Section */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-12 border border-amber-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Platform</h2>
+          <div className="space-y-4 text-gray-700 leading-relaxed">
+            <p>
+              The BFSI Deepfake Detection Platform is an AI-powered solution designed specifically for Banking, Financial Services, and Insurance sectors to combat the rising threat of deepfake fraud. Our platform leverages state-of-the-art machine learning models to analyze voice and video content for signs of manipulation or synthetic generation.
+            </p>
+            <p>
+              With the increasing sophistication of AI-generated content, financial institutions face unprecedented risks from fraudulent identity verification, social engineering attacks, and manipulated KYC documentation. This platform provides real-time analysis and risk assessment to help organizations maintain trust and security in their digital interactions.
+            </p>
+            <div className="grid md:grid-cols-3 gap-6 mt-6">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
+                <h3 className="font-bold text-gray-900 mb-2">Voice Analysis</h3>
+                <p className="text-sm text-gray-700">
+                  Advanced spectral analysis, voice print verification, and AI marker detection to identify synthetic or manipulated audio in phone calls and recordings.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
+                <h3 className="font-bold text-gray-900 mb-2">Video Analysis</h3>
+                <p className="text-sm text-gray-700">
+                  Frame-by-frame facial analysis, lip-sync consistency checks, and temporal coherence verification to detect face swaps and video deepfakes.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
+                <h3 className="font-bold text-gray-900 mb-2">Compliance Ready</h3>
+                <p className="text-sm text-gray-700">
+                  ISO 27001 certified processing, end-to-end encryption, BFSI regulatory compliance, and comprehensive audit trails for all analyses.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid md:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, index) => {
